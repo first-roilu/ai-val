@@ -1,0 +1,737 @@
+{
+  "decisions": [
+    {
+      "fid": "D-001",
+      "action": "keep",
+      "target": "",
+      "new_severity": "CRITICAL",
+      "reason": "Метода чтения настроек и поля суммы расходов за месяц действительно нет ни в части A, ни в части B — экран нечем заполнить.",
+      "evidence_quote": ""
+    },
+    {
+      "fid": "D-002",
+      "action": "keep",
+      "target": "",
+      "new_severity": "CRITICAL",
+      "reason": "Критерий приёмки требует роста февральского счётчика от покупки 31 января, что прямо противоречит правилу определения месяца в Ф-2.",
+      "evidence_quote": ""
+    },
+    {
+      "fid": "D-003",
+      "action": "keep",
+      "target": "",
+      "new_severity": "CRITICAL",
+      "reason": "Ф-3 и Ф-4 дают противоположные ожидания для одного события в одном календарном месяце; документ нигде не снимает коллизию.",
+      "evidence_quote": ""
+    },
+    {
+      "fid": "D-004",
+      "action": "merge",
+      "target": "D-002",
+      "new_severity": "CRITICAL",
+      "reason": "Та же коллизия критерия на границе месяца с правилом Ф-2.",
+      "evidence_quote": ""
+    },
+    {
+      "fid": "D-005",
+      "action": "keep",
+      "target": "",
+      "new_severity": "CRITICAL",
+      "reason": "GET, изменяющий настройку, подтверждён текстом шага 4 и URL saveLimit — нарушение протокола.",
+      "evidence_quote": ""
+    },
+    {
+      "fid": "D-006",
+      "action": "keep",
+      "target": "",
+      "new_severity": "CRITICAL",
+      "reason": "Для одной и той же неверной суммы заданы два исхода: 400 и 200 с result=ERROR.",
+      "evidence_quote": ""
+    },
+    {
+      "fid": "D-007",
+      "action": "merge",
+      "target": "D-006",
+      "new_severity": "CRITICAL",
+      "reason": "Тот же дефект: тело с ERROR под успешным кодом 200 против правила 400.",
+      "evidence_quote": ""
+    },
+    {
+      "fid": "D-008",
+      "action": "merge",
+      "target": "D-006",
+      "new_severity": "CRITICAL",
+      "reason": "Тот же дефект: ошибка валидации возвращается с успешным кодом.",
+      "evidence_quote": ""
+    },
+    {
+      "fid": "D-009",
+      "action": "drop",
+      "target": "",
+      "new_severity": "MAJOR",
+      "reason": "Цель — бизнес-формулировка, измеримое обязательство по времени задано НФТ, противоречия требований нет.",
+      "evidence_quote": "Сервис передаёт push на отправку в течение минуты после получения события."
+    },
+    {
+      "fid": "D-010",
+      "action": "keep",
+      "target": "",
+      "new_severity": "MAJOR",
+      "reason": "Архитектура и Sequence Diagram расходятся: канал чтения порога сервисом расходов в архитектуре не заявлен.",
+      "evidence_quote": ""
+    },
+    {
+      "fid": "D-011",
+      "action": "keep",
+      "target": "",
+      "new_severity": "MAJOR",
+      "reason": "Настройка задаётся по карте, а путь навигации не определяет, для какой карты открывается экран.",
+      "evidence_quote": ""
+    },
+    {
+      "fid": "D-012",
+      "action": "keep",
+      "target": "",
+      "new_severity": "MAJOR",
+      "reason": "Период «суммы за месяц» не определён; это отдельный от отсутствия метода вопрос.",
+      "evidence_quote": ""
+    },
+    {
+      "fid": "D-013",
+      "action": "keep",
+      "target": "",
+      "new_severity": "MAJOR",
+      "reason": "Начальное состояние экрана (порог не задан, переключатель выключен) — не граничный, а стартовый случай основного сценария, не описан.",
+      "evidence_quote": ""
+    },
+    {
+      "fid": "D-014",
+      "action": "merge",
+      "target": "D-001",
+      "new_severity": "MAJOR",
+      "reason": "Та же причина: суммы за месяц нет в контракте API, источник данных для экрана не задан.",
+      "evidence_quote": ""
+    },
+    {
+      "fid": "D-015",
+      "action": "keep",
+      "target": "",
+      "new_severity": "MAJOR",
+      "reason": "Поведение при отказе сервера и сети не описано, а result ERROR приходит с кодом 200 и не отличим от ошибки ввода.",
+      "evidence_quote": ""
+    },
+    {
+      "fid": "D-016",
+      "action": "merge",
+      "target": "D-032",
+      "new_severity": "MAJOR",
+      "reason": "Та же причина: условие включённости уведомления не попало ни в Ф-3, ни в процесс.",
+      "evidence_quote": ""
+    },
+    {
+      "fid": "D-017",
+      "action": "severity",
+      "target": "",
+      "new_severity": "MINOR",
+      "reason": "Миграция, feature flag, откат и мониторинг лежат за рамками требований к функции; вопрос полезен, но разработку не блокирует.",
+      "evidence_quote": ""
+    },
+    {
+      "fid": "D-018",
+      "action": "keep",
+      "target": "",
+      "new_severity": "MAJOR",
+      "reason": "Субъект права и судьба настройки для дополнительных, заблокированных и перевыпущенных карт не определены.",
+      "evidence_quote": ""
+    },
+    {
+      "fid": "D-019",
+      "action": "merge",
+      "target": "D-022",
+      "new_severity": "MAJOR",
+      "reason": "Та же причина: ограничение картами KZT заявлено, но поведение для других валют не задано ни в UI, ни в логике метода.",
+      "evidence_quote": ""
+    },
+    {
+      "fid": "D-020",
+      "action": "merge",
+      "target": "D-018",
+      "new_severity": "MAJOR",
+      "reason": "Тот же пробел: не определены статусы карты и судьба настройки при блокировке и перевыпуске.",
+      "evidence_quote": ""
+    },
+    {
+      "fid": "D-021",
+      "action": "merge",
+      "target": "D-018",
+      "new_severity": "MAJOR",
+      "reason": "Тот же дефект: не разграничены держатель, владелец карты и клиент сессии.",
+      "evidence_quote": ""
+    },
+    {
+      "fid": "D-022",
+      "action": "keep",
+      "target": "",
+      "new_severity": "MAJOR",
+      "reason": "В шагах логики нет проверки активности и валюты карты, хотя Ф-1 их требует.",
+      "evidence_quote": ""
+    },
+    {
+      "fid": "D-023",
+      "action": "merge",
+      "target": "D-022",
+      "new_severity": "MAJOR",
+      "reason": "Тот же дефект: отсутствие проверки статуса и валюты карты в логике метода.",
+      "evidence_quote": ""
+    },
+    {
+      "fid": "D-024",
+      "action": "keep",
+      "target": "",
+      "new_severity": "MAJOR",
+      "reason": "Возврат без исходной операции, возврат в другом месяце и отрицательный итог не описаны.",
+      "evidence_quote": ""
+    },
+    {
+      "fid": "D-025",
+      "action": "keep",
+      "target": "",
+      "new_severity": "MAJOR",
+      "reason": "Не заданы ни идентификатор часового пояса, ни событие, определяющее месяц, ни правило для поздно пришедших событий.",
+      "evidence_quote": ""
+    },
+    {
+      "fid": "D-026",
+      "action": "merge",
+      "target": "D-025",
+      "new_severity": "MAJOR",
+      "reason": "Тот же дефект: пояс задан названием города, пояс входной метки не задан.",
+      "evidence_quote": ""
+    },
+    {
+      "fid": "D-027",
+      "action": "merge",
+      "target": "D-002",
+      "new_severity": "MAJOR",
+      "reason": "Та же коллизия критерия приёмки и Ф-2 на границе месяца.",
+      "evidence_quote": ""
+    },
+    {
+      "fid": "D-028",
+      "action": "merge",
+      "target": "D-029",
+      "new_severity": "MAJOR",
+      "reason": "Та же причина: не определён признак отнесения операции к покупкам, перечень исключений незамкнут.",
+      "evidence_quote": ""
+    },
+    {
+      "fid": "D-029",
+      "action": "keep",
+      "target": "",
+      "new_severity": "MAJOR",
+      "reason": "Понятие «покупка» не определено, перечень исключений незамкнут — классификация операций неоднозначна.",
+      "evidence_quote": ""
+    },
+    {
+      "fid": "D-030",
+      "action": "merge",
+      "target": "D-024",
+      "new_severity": "MAJOR",
+      "reason": "Частный случай той же находки: возврат больше расходов месяца.",
+      "evidence_quote": ""
+    },
+    {
+      "fid": "D-031",
+      "action": "merge",
+      "target": "D-003",
+      "new_severity": "MAJOR",
+      "reason": "Та же коллизия Ф-3 и Ф-4.",
+      "evidence_quote": ""
+    },
+    {
+      "fid": "D-032",
+      "action": "keep",
+      "target": "",
+      "new_severity": "MAJOR",
+      "reason": "Ф-3 не ставит отправку push в зависимость от включённого уведомления, хотя по умолчанию оно выключено.",
+      "evidence_quote": ""
+    },
+    {
+      "fid": "D-033",
+      "action": "keep",
+      "target": "",
+      "new_severity": "MAJOR",
+      "reason": "Не сказано, к какому календарному месяцу относится лимит push: к месяцу покупки или к месяцу отправки.",
+      "evidence_quote": ""
+    },
+    {
+      "fid": "D-034",
+      "action": "merge",
+      "target": "D-003",
+      "new_severity": "MAJOR",
+      "reason": "Та же причина: не определена судьба признака отправки и смысл «истории предыдущей настройки» при смене порога.",
+      "evidence_quote": ""
+    },
+    {
+      "fid": "D-035",
+      "action": "keep",
+      "target": "",
+      "new_severity": "MAJOR",
+      "reason": "Не указано, какая сумма передаётся в push, и в каких единицах.",
+      "evidence_quote": ""
+    },
+    {
+      "fid": "D-036",
+      "action": "keep",
+      "target": "",
+      "new_severity": "MAJOR",
+      "reason": "Не заданы способ передачи события в сервис расходов, повтор и поведение при его недоступности.",
+      "evidence_quote": ""
+    },
+    {
+      "fid": "D-037",
+      "action": "merge",
+      "target": "D-032",
+      "new_severity": "MAJOR",
+      "reason": "Та же причина: запрашивается только порог без признака включения уведомления.",
+      "evidence_quote": ""
+    },
+    {
+      "fid": "D-038",
+      "action": "keep",
+      "target": "",
+      "new_severity": "MAJOR",
+      "reason": "События возврата в интеграционном описании нет, связи с исходной покупкой в данных тоже нет.",
+      "evidence_quote": ""
+    },
+    {
+      "fid": "D-039",
+      "action": "keep",
+      "target": "",
+      "new_severity": "MAJOR",
+      "reason": "Адресат push не определён: последние четыре цифры карты не позволяют однозначно выбрать получателя.",
+      "evidence_quote": ""
+    },
+    {
+      "fid": "D-040",
+      "action": "keep",
+      "target": "",
+      "new_severity": "MAJOR",
+      "reason": "НФТ непроверяемо и остальные нефункциональные требования отсутствуют — это MAJOR по рубрике.",
+      "evidence_quote": ""
+    },
+    {
+      "fid": "D-041",
+      "action": "merge",
+      "target": "D-040",
+      "new_severity": "MAJOR",
+      "reason": "Тот же дефект: непроверяемое НФТ без точки отсчёта и процентиля.",
+      "evidence_quote": ""
+    },
+    {
+      "fid": "D-042",
+      "action": "merge",
+      "target": "D-040",
+      "new_severity": "MAJOR",
+      "reason": "Тот же дефект: не заданы процентиль, нагрузка и точки измерения.",
+      "evidence_quote": ""
+    },
+    {
+      "fid": "D-043",
+      "action": "keep",
+      "target": "",
+      "new_severity": "MAJOR",
+      "reason": "Перечень полей не образует модель: нет ключей, уровня хранения признака, срока хранения и связи возврата.",
+      "evidence_quote": ""
+    },
+    {
+      "fid": "D-044",
+      "action": "keep",
+      "target": "",
+      "new_severity": "MAJOR",
+      "reason": "Правило сравнения суммы в тиынах с порогом в тенге не задано — расхождение единиц.",
+      "evidence_quote": ""
+    },
+    {
+      "fid": "D-045",
+      "action": "merge",
+      "target": "D-043",
+      "new_severity": "MAJOR",
+      "reason": "Часть той же модели данных: уровень хранения признака отправки не задан.",
+      "evidence_quote": ""
+    },
+    {
+      "fid": "D-046",
+      "action": "merge",
+      "target": "D-043",
+      "new_severity": "MAJOR",
+      "reason": "Часть той же модели данных: ключ дедупликации событий не задан.",
+      "evidence_quote": ""
+    },
+    {
+      "fid": "D-047",
+      "action": "keep",
+      "target": "",
+      "new_severity": "MAJOR",
+      "reason": "Содержательный раздел спецификации оставлен заглушкой — пустой раздел по рубрике MAJOR.",
+      "evidence_quote": ""
+    },
+    {
+      "fid": "D-048",
+      "action": "keep",
+      "target": "",
+      "new_severity": "MAJOR",
+      "reason": "Критерии покрывают три сценария, трассировки «требование — критерий» нет.",
+      "evidence_quote": ""
+    },
+    {
+      "fid": "D-049",
+      "action": "merge",
+      "target": "D-032",
+      "new_severity": "MAJOR",
+      "reason": "Та же причина: в критерии не зафиксированы включённое уведомление и отсутствие push в месяце.",
+      "evidence_quote": ""
+    },
+    {
+      "fid": "D-050",
+      "action": "merge",
+      "target": "D-002",
+      "new_severity": "MAJOR",
+      "reason": "Та же коллизия критерия приёмки и Ф-2.",
+      "evidence_quote": ""
+    },
+    {
+      "fid": "D-051",
+      "action": "severity",
+      "target": "",
+      "new_severity": "MINOR",
+      "reason": "Dev-адрес задан, отсутствие Prod-адреса и версии — деталь конфигурации, разработку не блокирует.",
+      "evidence_quote": ""
+    },
+    {
+      "fid": "D-052",
+      "action": "severity",
+      "target": "",
+      "new_severity": "MINOR",
+      "reason": "Незаполненное поле «Swagger» — оформление, на реализацию метода не влияет.",
+      "evidence_quote": ""
+    },
+    {
+      "fid": "D-053",
+      "action": "severity",
+      "target": "",
+      "new_severity": "MINOR",
+      "reason": "Невалидный enabled — редкий случай валидации, ответ 400 выводится из общего правила и уточняется при проектировании.",
+      "evidence_quote": ""
+    },
+    {
+      "fid": "D-054",
+      "action": "severity",
+      "target": "",
+      "new_severity": "MINOR",
+      "reason": "Аудит и лимит частоты записи — смежные требования за рамками документа, журналирование решают при проектировании.",
+      "evidence_quote": ""
+    },
+    {
+      "fid": "D-055",
+      "action": "keep",
+      "target": "",
+      "new_severity": "MAJOR",
+      "reason": "Шаг логики требует проверки принадлежности карты, но источник этих данных не назван ни в схеме, ни в логике.",
+      "evidence_quote": ""
+    },
+    {
+      "fid": "D-056",
+      "action": "keep",
+      "target": "",
+      "new_severity": "MAJOR",
+      "reason": "Не определено, что такое cardId; номер карты проходит по длине и попадает в query-строку и логи.",
+      "evidence_quote": ""
+    },
+    {
+      "fid": "D-057",
+      "action": "keep",
+      "target": "",
+      "new_severity": "MAJOR",
+      "reason": "Типы amount и enabled в запросе и ответе различаются — расхождение типов контракта.",
+      "evidence_quote": ""
+    },
+    {
+      "fid": "D-058",
+      "action": "keep",
+      "target": "",
+      "new_severity": "MAJOR",
+      "reason": "При обязательных amount и enabled выключить уведомление до задания порога невозможно.",
+      "evidence_quote": ""
+    },
+    {
+      "fid": "D-059",
+      "action": "keep",
+      "target": "",
+      "new_severity": "MAJOR",
+      "reason": "201 объявлен успешным, но не описан и не возвращается — MAJOR по рубрике (неиспользуемый код ответа).",
+      "evidence_quote": ""
+    },
+    {
+      "fid": "D-060",
+      "action": "keep",
+      "target": "",
+      "new_severity": "MAJOR",
+      "reason": "Обязательность поля result не задана, а в примерах ошибочных ответов его нет.",
+      "evidence_quote": ""
+    },
+    {
+      "fid": "D-061",
+      "action": "keep",
+      "target": "",
+      "new_severity": "MAJOR",
+      "reason": "Условие «При успехе» не расшифровано, поэтому наличие amount в ответе не определено.",
+      "evidence_quote": ""
+    },
+    {
+      "fid": "D-062",
+      "action": "merge",
+      "target": "D-061",
+      "new_severity": "MAJOR",
+      "reason": "Та же причина: условие поля в таблице ответа не привязано к однозначному признаку успеха или ошибки.",
+      "evidence_quote": ""
+    },
+    {
+      "fid": "D-063",
+      "action": "merge",
+      "target": "D-006",
+      "new_severity": "MAJOR",
+      "reason": "Тот же дефект двойной модели ответа: вариант ERROR под кодом 200 не описан в разделе статусов.",
+      "evidence_quote": ""
+    },
+    {
+      "fid": "D-064",
+      "action": "merge",
+      "target": "D-006",
+      "new_severity": "MAJOR",
+      "reason": "Тот же дефект: недопустимая сумма подходит и под 400, и под 200 с result=ERROR.",
+      "evidence_quote": ""
+    },
+    {
+      "fid": "D-065",
+      "action": "keep",
+      "target": "",
+      "new_severity": "MAJOR",
+      "reason": "404 возвращается, но не объявлен, а 403 объявлен и не используется — реестр кодов не соответствует поведению.",
+      "evidence_quote": ""
+    },
+    {
+      "fid": "D-066",
+      "action": "keep",
+      "target": "",
+      "new_severity": "MAJOR",
+      "reason": "Не определены условие 500 и атомарность замены настройки при сбое после шага 4.",
+      "evidence_quote": ""
+    },
+    {
+      "fid": "D-067",
+      "action": "merge",
+      "target": "D-060",
+      "new_severity": "MAJOR",
+      "reason": "Тот же дефект: в примерах ошибочных ответов отсутствует объявленное поле result.",
+      "evidence_quote": ""
+    },
+    {
+      "fid": "D-068",
+      "action": "merge",
+      "target": "D-065",
+      "new_severity": "MAJOR",
+      "reason": "Тот же дефект: 404 используется, но не объявлен в перечне статусов.",
+      "evidence_quote": ""
+    },
+    {
+      "fid": "D-069",
+      "action": "merge",
+      "target": "D-060",
+      "new_severity": "MAJOR",
+      "reason": "Тот же дефект: поле result объявлено безусловно, но отсутствует в примере 500.",
+      "evidence_quote": ""
+    },
+    {
+      "fid": "D-070",
+      "action": "keep",
+      "target": "",
+      "new_severity": "MINOR",
+      "reason": "Терминологическое расхождение «личный бюджет» против «порог» без влияния на реализацию.",
+      "evidence_quote": ""
+    },
+    {
+      "fid": "D-071",
+      "action": "keep",
+      "target": "",
+      "new_severity": "MINOR",
+      "reason": "Тип элементов навигации не указан — деталь оформления UI.",
+      "evidence_quote": ""
+    },
+    {
+      "fid": "D-072",
+      "action": "keep",
+      "target": "",
+      "new_severity": "MINOR",
+      "reason": "Отсутствие приоритетов не блокирует разработку, но полезно заказчику.",
+      "evidence_quote": ""
+    },
+    {
+      "fid": "D-073",
+      "action": "keep",
+      "target": "",
+      "new_severity": "MINOR",
+      "reason": "Расхождение формулировок «получает push» и «передаёт на отправку» — терминологическая мелочь.",
+      "evidence_quote": ""
+    },
+    {
+      "fid": "D-074",
+      "action": "keep",
+      "target": "",
+      "new_severity": "MINOR",
+      "reason": "Дублирование бизнес-правил между частями A и B без ссылки на источник истины.",
+      "evidence_quote": ""
+    },
+    {
+      "fid": "D-075",
+      "action": "keep",
+      "target": "",
+      "new_severity": "MINOR",
+      "reason": "Чтение и сохранение объединены в одном требовании — вопрос трассировки, не поведения.",
+      "evidence_quote": ""
+    },
+    {
+      "fid": "D-076",
+      "action": "merge",
+      "target": "D-002",
+      "new_severity": "MINOR",
+      "reason": "Тот же дефект критерия на границе месяца.",
+      "evidence_quote": ""
+    },
+    {
+      "fid": "D-077",
+      "action": "keep",
+      "target": "",
+      "new_severity": "MINOR",
+      "reason": "Незаполненный чек-лист ревью — оформление.",
+      "evidence_quote": ""
+    },
+    {
+      "fid": "D-078",
+      "action": "keep",
+      "target": "",
+      "new_severity": "MINOR",
+      "reason": "Пустой блок согласующих — оформление.",
+      "evidence_quote": ""
+    },
+    {
+      "fid": "D-079",
+      "action": "keep",
+      "target": "",
+      "new_severity": "MINOR",
+      "reason": "Имя класса реализации в требованиях — уместность, на поведение не влияет.",
+      "evidence_quote": ""
+    },
+    {
+      "fid": "D-080",
+      "action": "keep",
+      "target": "",
+      "new_severity": "MINOR",
+      "reason": "Термины без определений — полезно завести глоссарий, разработку не блокирует.",
+      "evidence_quote": ""
+    },
+    {
+      "fid": "D-081",
+      "action": "merge",
+      "target": "D-074",
+      "new_severity": "MINOR",
+      "reason": "Та же причина: правило диапазона продублировано в части A и части B.",
+      "evidence_quote": ""
+    },
+    {
+      "fid": "D-082",
+      "action": "merge",
+      "target": "D-074",
+      "new_severity": "MINOR",
+      "reason": "Та же причина: правило сохранения накопленной суммы продублировано в двух частях.",
+      "evidence_quote": ""
+    },
+    {
+      "fid": "D-083",
+      "action": "keep",
+      "target": "",
+      "new_severity": "MINOR",
+      "reason": "Расхождение наименований «сервис настроек» и «хранилище настроек» — терминология.",
+      "evidence_quote": ""
+    },
+    {
+      "fid": "D-084",
+      "action": "merge",
+      "target": "D-057",
+      "new_severity": "MINOR",
+      "reason": "Та же причина: enabled описан разными типами в запросе и ответе.",
+      "evidence_quote": ""
+    },
+    {
+      "fid": "D-085",
+      "action": "keep",
+      "target": "",
+      "new_severity": "MINOR",
+      "reason": "Content-Type при отсутствии тела — оформление контракта, исправляется вместе с переходом на POST.",
+      "evidence_quote": ""
+    },
+    {
+      "fid": "D-086",
+      "action": "keep",
+      "target": "",
+      "new_severity": "MINOR",
+      "reason": "Незамкнутый перечень кодов — деталь описания ошибок.",
+      "evidence_quote": ""
+    },
+    {
+      "fid": "D-087",
+      "action": "merge",
+      "target": "D-053",
+      "new_severity": "MINOR",
+      "reason": "Та же причина: не перечислены проверки, при которых возвращается 400.",
+      "evidence_quote": ""
+    },
+    {
+      "fid": "D-088",
+      "action": "keep",
+      "target": "",
+      "new_severity": "MINOR",
+      "reason": "Статусы 401, 403 и 500 размещены внутри раздела 200 — оформление документа.",
+      "evidence_quote": ""
+    },
+    {
+      "fid": "D-089",
+      "action": "keep",
+      "target": "",
+      "new_severity": "MINOR",
+      "reason": "Истёкший или отозванный токен не отнесён ни к одному коду — редкий случай, деталь описания 401.",
+      "evidence_quote": ""
+    }
+  ],
+  "missed": [
+    {
+      "rids": [
+        "Ф-3",
+        "Ф-4"
+      ],
+      "criterion": "ОДНОЗН",
+      "category": "домен",
+      "severity": "MAJOR",
+      "title": "Не задано поведение при понижении порога ниже накопленной суммы",
+      "quotes": [
+        "При изменении порога накопленная сумма сохраняется. Если она ниже нового порога, следующее достижение вызывает push независимо от истории предыдущей настройки.",
+        "Когда расходы переходят от суммы ниже порога к сумме, равной порогу или выше, клиент получает push. На карту приходится максимум один такой push за календарный месяц."
+      ],
+      "problem": "Ф-4 описывает только случай, когда накопленная сумма ниже нового порога. Случай, когда клиент ставит порог ниже уже накопленных расходов месяца, не описан: не сказано, отправляется ли push сразу после сохранения, ждёт ли следующего перехода (которого может не быть до конца месяца) и как это соотносится с месячным лимитом Ф-3.",
+      "impact": "Разработка выберет поведение произвольно, а тест на понижение порога даст разный ожидаемый результат у разных команд; клиент либо получит неожиданный push, либо не получит его вовсе.",
+      "scenario": "Расходы текущего месяца 48 500 ₸, push в этом месяце ещё не отправлялся, клиент сохраняет порог 40 000 ₸.",
+      "recommendation": "Дописать в Ф-4: «Если после изменения порога накопленная сумма уже равна новому порогу или выше, push не отправляется; уведомление сработает при следующем переходе от суммы ниже порога к сумме, равной порогу или выше, с учётом лимита Ф-3».",
+      "question": "Должен ли клиент получить push сразу после того, как понизил порог ниже уже накопленной суммы расходов, или только при следующем переходе через порог?"
+    }
+  ]
+}

@@ -43,6 +43,7 @@ class Settings:
     runs_dir: Path = field(default_factory=lambda: Path("runs"))
     use_cache: bool = True
     quick: bool = False
+    replay_dir: Path | None = None  # воспроизведение: ответы модели из трассы прогона, модель не вызывается
 
     @property
     def model(self) -> str:
@@ -56,7 +57,7 @@ class Settings:
     @property
     def reserve_models(self) -> list[str]:
         """Резервные модели: без основной и без моделей другого поставщика."""
-        if self.provider == "fake":
+        if self.provider == "fake" or self.replay_dir is not None:
             return []
         prefix = _MODEL_PREFIX.get(self.provider)
         return [m for m in self.fallback_models if m != self.model and (prefix is None or m.lower().startswith(prefix))]
@@ -121,6 +122,10 @@ class Settings:
             raise ConfigError(f"LLM_PROVIDER={self.provider!r} не поддерживается. Допустимо: {', '.join(PROVIDERS)}.")
         if self.thinking not in THINKING_LEVELS:
             raise ConfigError(f"LLM_THINKING={self.thinking!r} не поддерживается. Допустимо: {', '.join(THINKING_LEVELS)}.")
+        if self.max_rpm < 1 or self.concurrency < 1 or self.batch_size < 0:
+            raise ConfigError("LLM_MAX_RPM и LLM_CONCURRENCY должны быть ≥ 1, REQCHECK_BATCH_SIZE ≥ 0 (0 — авто).")
+        if self.replay_dir is not None:  # ответы берутся из трассы: ключ модели не нужен
+            return
         if self.provider == "gemini":
             if not self.gemini_api_key:
                 raise ConfigError(
@@ -139,8 +144,6 @@ class Settings:
                 raise ConfigError("Не задан OPENAI_MODEL для OpenAI-совместимого провайдера.")
             if not self.openai_api_key and not self.openai_base_url:
                 raise ConfigError("Не задан OPENAI_API_KEY (или OPENAI_BASE_URL для локального сервера).")
-        if self.max_rpm < 1 or self.concurrency < 1 or self.batch_size < 0:
-            raise ConfigError("LLM_MAX_RPM и LLM_CONCURRENCY должны быть ≥ 1, REQCHECK_BATCH_SIZE ≥ 0 (0 — авто).")
 
 
 def _auto_provider(env) -> str:

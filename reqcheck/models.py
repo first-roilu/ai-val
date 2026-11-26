@@ -575,6 +575,7 @@ class RunPassport(BaseModel):
     tokens_in: int = 0
     tokens_out: int = 0
     run_dir: str = ""
+    replay: str = ""  # трасса, из которой воспроизведён прогон
     text_integrity: str = ""
     limitations: list[str] = Field(default_factory=list)
 

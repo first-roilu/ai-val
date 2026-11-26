@@ -16,6 +16,11 @@ def _slug(text: str) -> str:
     return re.sub(r"[^\w.-]+", "-", text, flags=re.UNICODE).strip("-")[:60] or "doc"
 
 
+def call_basename(n: int, step: str) -> str:
+    """Имя файлов вызова в calls/ — номер и шаг. По нему ответы находит и воспроизведение прогона."""
+    return f"{n:02d}-{_slug(step)}"
+
+
 class RunTrace:
     def __init__(self, runs_dir: Path, doc_stem: str, started: datetime):
         base = Path(runs_dir) / f"{started.strftime('%Y%m%d-%H%M%S')}-{_slug(doc_stem)}"
@@ -61,7 +66,7 @@ class RunTrace:
                     self.tokens_in += result.tokens_in
                     self.tokens_out += result.tokens_out
                     self.tokens_thinking += result.tokens_thinking
-        base = self.dir / "calls" / f"{n:02d}-{_slug(req.step)}"
+        base = self.dir / "calls" / call_basename(n, req.step)
         try:
             (base.parent / f"{base.name}.prompt.md").write_text(
                 f"# step: {req.step}\n\n## system\n\n{req.system}\n\n## user\n\n{req.user}\n", encoding="utf-8"

@@ -1,0 +1,35 @@
+name: tests
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  test:
+    name: Python ${{ matrix.python }} · ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+        python: ["3.11", "3.14"]
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: actions/setup-python@v6
+        with:
+          python-version: ${{ matrix.python }}
+          cache: pip
+
+      - name: Установка зависимостей
+        run: pip install -r requirements.txt
+
+      - name: Тесты
+        run: python -m pytest -q
+
+      - name: Сданный отчёт воспроизводится из трассы без ключа
+        run: python -m reqcheck docs/requirements.md reports/replay.md --replay runs/20261126-202502-docs-requirements
+
+      - name: Прогон без модели (проверка установки)
+        run: python -m reqcheck docs/requirements.md reports/offline.md --provider fake

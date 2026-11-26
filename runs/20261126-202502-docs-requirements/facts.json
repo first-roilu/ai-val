@@ -1,0 +1,1379 @@
+[
+{
+  "rid": "REQ-01",
+  "entity": "Держатель карты",
+  "attribute": "момент информирования о достижении бюджета",
+  "value": "в момент покупки",
+  "unit": "",
+  "condition": "",
+  "evidence": {
+    "quote": "Дать клиенту возможность узнать о достижении личного бюджета в момент покупки.",
+    "locator": {
+      "section_path": "Часть A. Новый функционал › Цели",
+      "line_start": 23,
+      "line_end": 23,
+      "page": null
+    }
+  }
+},
+{
+  "rid": "REQ-02",
+  "entity": "Сервис настроек",
+  "attribute": "клиент интеграции",
+  "value": "мобильное приложение",
+  "unit": "",
+  "condition": "",
+  "evidence": {
+    "quote": "Мобильное приложение → сервис настроек.",
+    "locator": {
+      "section_path": "Часть A. Новый функционал › Архитектура решения",
+      "line_start": 26,
+      "line_end": 26,
+      "page": null
+    }
+  }
+},
+{
+  "rid": "REQ-03",
+  "entity": "Сервис расходов",
+  "attribute": "источник данных",
+  "value": "карточный процессинг",
+  "unit": "",
+  "condition": "",
+  "evidence": {
+    "quote": "Карточный процессинг → учёт расходов → сервис push.",
+    "locator": {
+      "section_path": "Часть A. Новый функционал › Архитектура решения",
+      "line_start": 26,
+      "line_end": 26,
+      "page": null
+    }
+  }
+},
+{
+  "rid": "REQ-03",
+  "entity": "Push-уведомление",
+  "attribute": "источник отправки",
+  "value": "сервис расходов (учёт расходов)",
+  "unit": "",
+  "condition": "",
+  "evidence": {
+    "quote": "Карточный процессинг → учёт расходов → сервис push.",
+    "locator": {
+      "section_path": "Часть A. Новый функционал › Архитектура решения",
+      "line_start": 26,
+      "line_end": 26,
+      "page": null
+    }
+  }
+},
+{
+  "rid": "REQ-04",
+  "entity": "Мобильное приложение",
+  "attribute": "путь к экрану настроек уведомлений",
+  "value": "Карты → Расходы → Уведомления",
+  "unit": "",
+  "condition": "",
+  "evidence": {
+    "quote": "Карты → Расходы → Уведомления.",
+    "locator": {
+      "section_path": "Часть A. Новый функционал › Дизайн процесса UI",
+      "line_start": 29,
+      "line_end": 29,
+      "page": null
+    }
+  }
+},
+{
+  "rid": "REQ-05",
+  "entity": "Мобильное приложение",
+  "attribute": "элементы экрана уведомлений",
+  "value": "переключатель, поле «Порог, ₸», сумма за месяц, кнопка «Сохранить»",
+  "unit": "",
+  "condition": "",
+  "evidence": {
+    "quote": "На экране видны переключатель, поле «Порог, ₸», сумма за месяц и кнопка «Сохранить».",
+    "locator": {
+      "section_path": "Часть A. Новый функционал › Дизайн процесса UI",
+      "line_start": 29,
+      "line_end": 29,
+      "page": null
+    }
+  }
+},
+{
+  "rid": "REQ-06",
+  "entity": "Мобильное приложение",
+  "attribute": "расположение сообщения об ошибке ввода",
+  "value": "под полем",
+  "unit": "",
+  "condition": "",
+  "evidence": {
+    "quote": "При ошибке ввода сообщение появляется под полем.",
+    "locator": {
+      "section_path": "Часть A. Новый функционал › Дизайн процесса UI",
+      "line_start": 29,
+      "line_end": 29,
+      "page": null
+    }
+  }
+},
+{
+  "rid": "REQ-07",
+  "entity": "Push-уведомление",
+  "attribute": "условие отправки в процессе",
+  "value": "при достижении порога после пересчёта расходов",
+  "unit": "",
+  "condition": "",
+  "evidence": {
+    "quote": "Проведение покупки → пересчёт расходов → проверка порога → при достижении отправка push → завершение.",
+    "locator": {
+      "section_path": "Часть A. Новый функционал › Требования к изменениям › BPMN схема процесса",
+      "line_start": 34,
+      "line_end": 34,
+      "page": null
+    }
+  }
+},
+{
+  "rid": "REQ-08.1",
+  "entity": "Порог расходов",
+  "attribute": "тип значения",
+  "value": "целое",
+  "unit": "",
+  "condition": "",
+  "evidence": {
+    "quote": "Держатель активной карты KZT задаёт целый порог от 1 000 до 1 000 000 ₸ включительно.",
+    "locator": {
+      "section_path": "Часть A. Новый функционал › Требования к изменениям › Функциональные требования",
+      "line_start": 37,
+      "line_end": 37,
+      "page": null
+    }
+  }
+},
+{
+  "rid": "REQ-08.1",
+  "entity": "Порог расходов",
+  "attribute": "минимальное значение",
+  "value": "1000",
+  "unit": "₸",
+  "condition": "включительно",
+  "evidence": {
+    "quote": "Держатель активной карты KZT задаёт целый порог от 1 000 до 1 000 000 ₸ включительно.",
+    "locator": {
+      "section_path": "Часть A. Новый функционал › Требования к изменениям › Функциональные требования",
+      "line_start": 37,
+      "line_end": 37,
+      "page": null
+    }
+  }
+},
+{
+  "rid": "REQ-08.1",
+  "entity": "Порог расходов",
+  "attribute": "максимальное значение",
+  "value": "1000000",
+  "unit": "₸",
+  "condition": "включительно",
+  "evidence": {
+    "quote": "Держатель активной карты KZT задаёт целый порог от 1 000 до 1 000 000 ₸ включительно.",
+    "locator": {
+      "section_path": "Часть A. Новый функционал › Требования к изменениям › Функциональные требования",
+      "line_start": 37,
+      "line_end": 37,
+      "page": null
+    }
+  }
+},
+{
+  "rid": "REQ-08.1",
+  "entity": "Держатель карты",
+  "attribute": "тип карты для настройки",
+  "value": "активная карта KZT",
+  "unit": "",
+  "condition": "",
+  "evidence": {
+    "quote": "Держатель активной карты KZT задаёт целый порог от 1 000 до 1 000 000 ₸ включительно.",
+    "locator": {
+      "section_path": "Часть A. Новый функционал › Требования к изменениям › Функциональные требования",
+      "line_start": 37,
+      "line_end": 37,
+      "page": null
+    }
+  }
+},
+{
+  "rid": "REQ-08.2",
+  "entity": "Переключатель уведомлений",
+  "attribute": "значение по умолчанию",
+  "value": "выключено",
+  "unit": "",
+  "condition": "",
+  "evidence": {
+    "quote": "По умолчанию уведомление выключено.",
+    "locator": {
+      "section_path": "Часть A. Новый функционал › Требования к изменениям › Функциональные требования",
+      "line_start": 37,
+      "line_end": 37,
+      "page": null
+    }
+  }
+},
+{
+  "rid": "REQ-09.1",
+  "entity": "Месяц",
+  "attribute": "определяется по",
+  "value": "дата совершения покупки",
+  "unit": "",
+  "condition": "в часовом поясе Алматы",
+  "evidence": {
+    "quote": "Месяц определяется по дате совершения покупки в Алматы.",
+    "locator": {
+      "section_path": "Часть A. Новый функционал › Требования к изменениям › Функциональные требования",
+      "line_start": 38,
+      "line_end": 38,
+      "page": null
+    }
+  }
+},
+{
+  "rid": "REQ-09.1",
+  "entity": "Часовой пояс Алматы",
+  "attribute": "назначение",
+  "value": "определение месяца расходов",
+  "unit": "",
+  "condition": "",
+  "evidence": {
+    "quote": "Месяц определяется по дате совершения покупки в Алматы.",
+    "locator": {
+      "section_path": "Часть A. Новый функционал › Требования к изменениям › Функциональные требования",
+      "line_start": 38,
+      "line_end": 38,
+      "page": null
+    }
+  }
+},
+{
+  "rid": "REQ-09.2",
+  "entity": "Расходы за месяц",
+  "attribute": "включаемые операции",
+  "value": "только проведённые покупки",
+  "unit": "",
+  "condition": "",
+  "evidence": {
+    "quote": "В расходы входят проведённые покупки.",
+    "locator": {
+      "section_path": "Часть A. Новый функционал › Требования к изменениям › Функциональные требования",
+      "line_start": 38,
+      "line_end": 38,
+      "page": null
+    }
+  }
+},
+{
+  "rid": "REQ-09.3",
+  "entity": "Возврат",
+  "attribute": "влияние на расходы",
+  "value": "уменьшает расходы месяца исходной покупки",
+  "unit": "",
+  "condition": "",
+  "evidence": {
+    "quote": "Возврат уменьшает расходы месяца исходной покупки.",
+    "locator": {
+      "section_path": "Часть A. Новый функционал › Требования к изменениям › Функциональные требования",
+      "line_start": 38,
+      "line_end": 38,
+      "page": null
+    }
+  }
+},
+{
+  "rid": "REQ-09.4",
+  "entity": "Расходы за месяц",
+  "attribute": "исключаемые операции",
+  "value": "переводы и снятие наличных",
+  "unit": "",
+  "condition": "",
+  "evidence": {
+    "quote": "Переводы и снятие наличных исключаются.",
+    "locator": {
+      "section_path": "Часть A. Новый функционал › Требования к изменениям › Функциональные требования",
+      "line_start": 38,
+      "line_end": 38,
+      "page": null
+    }
+  }
+},
+{
+  "rid": "REQ-10.1",
+  "entity": "Push-уведомление",
+  "attribute": "условие отправки",
+  "value": "переход расходов от ниже порога к порогу или выше",
+  "unit": "",
+  "condition": "",
+  "evidence": {
+    "quote": "Когда расходы переходят от суммы ниже порога к сумме, равной порогу или выше, клиент получает push.",
+    "locator": {
+      "section_path": "Часть A. Новый функционал › Требования к изменениям › Функциональные требования",
+      "line_start": 39,
+      "line_end": 39,
+      "page": null
+    }
+  }
+},
+{
+  "rid": "REQ-10.2",
+  "entity": "Push-уведомление",
+  "attribute": "максимум отправок на карту",
+  "value": "1",
+  "unit": "шт.",
+  "condition": "за календарный месяц",
+  "evidence": {
+    "quote": "На карту приходится максимум один такой push за календарный месяц.",
+    "locator": {
+      "section_path": "Часть A. Новый функционал › Требования к изменениям › Функциональные требования",
+      "line_start": 39,
+      "line_end": 39,
+      "page": null
+    }
+  }
+},
+{
+  "rid": "REQ-11.1",
+  "entity": "Расходы за месяц",
+  "attribute": "при изменении порога",
+  "value": "накопленная сумма сохраняется",
+  "unit": "",
+  "condition": "",
+  "evidence": {
+    "quote": "При изменении порога накопленная сумма сохраняется.",
+    "locator": {
+      "section_path": "Часть A. Новый функционал › Требования к изменениям › Функциональные требования",
+      "line_start": 40,
+      "line_end": 40,
+      "page": null
+    }
+  }
+},
+{
+  "rid": "REQ-11.2",
+  "entity": "Push-уведомление",
+  "attribute": "условие после снижения порога",
+  "value": "следующее достижение вызывает push независимо от истории",
+  "unit": "",
+  "condition": "",
+  "evidence": {
+    "quote": "Если она ниже нового порога, следующее достижение вызывает push независимо от истории предыдущей настройки.",
+    "locator": {
+      "section_path": "Часть A. Новый функционал › Требования к изменениям › Функциональные требования",
+      "line_start": 40,
+      "line_end": 40,
+      "page": null
+    }
+  }
+},
+{
+  "rid": "REQ-12",
+  "entity": "Карточный процессинг",
+  "attribute": "уведомляет",
+  "value": "сервис расходов о проведённой покупке",
+  "unit": "",
+  "condition": "",
+  "evidence": {
+    "quote": "Процессинг → сервис расходов: проведена покупка.",
+    "locator": {
+      "section_path": "Часть A. Новый функционал › Sequence Diagram",
+      "line_start": 43,
+      "line_end": 43,
+      "page": null
+    }
+  }
+},
+{
+  "rid": "REQ-13",
+  "entity": "Сервис расходов",
+  "attribute": "запрашивает у сервиса настроек",
+  "value": "порог карты",
+  "unit": "",
+  "condition": "",
+  "evidence": {
+    "quote": "Сервис расходов → настройки: получить порог карты.",
+    "locator": {
+      "section_path": "Часть A. Новый функционал › Sequence Diagram",
+      "line_start": 43,
+      "line_end": 43,
+      "page": null
+    }
+  }
+},
+{
+  "rid": "REQ-14",
+  "entity": "Push-уведомление",
+  "attribute": "содержимое",
+  "value": "последние четыре цифры карты и сумма",
+  "unit": "",
+  "condition": "при достижении порога",
+  "evidence": {
+    "quote": "Сервис расходов → push: передать последние четыре цифры карты и сумму при достижении порога.",
+    "locator": {
+      "section_path": "Часть A. Новый функционал › Sequence Diagram",
+      "line_start": 43,
+      "line_end": 43,
+      "page": null
+    }
+  }
+},
+{
+  "rid": "REQ-15",
+  "entity": "Push-уведомление",
+  "attribute": "срок передачи на отправку",
+  "value": "1",
+  "unit": "минута",
+  "condition": "после получения события",
+  "evidence": {
+    "quote": "Сервис передаёт push на отправку в течение минуты после получения события.",
+    "locator": {
+      "section_path": "Часть A. Новый функционал › Нефункциональные требования",
+      "line_start": 46,
+      "line_end": 46,
+      "page": null
+    }
+  }
+},
+{
+  "rid": "REQ-16",
+  "entity": "Карта",
+  "attribute": "хранимый идентификатор",
+  "value": "идентификатор карты",
+  "unit": "",
+  "condition": "",
+  "evidence": {
+    "quote": "Хранить идентификатор карты, месяц, идентификатор операции, сумму покупки в тиынах, признак отправки и порог в тенге.",
+    "locator": {
+      "section_path": "Часть A. Новый функционал › Требования к данным",
+      "line_start": 49,
+      "line_end": 49,
+      "page": null
+    }
+  }
+},
+{
+  "rid": "REQ-16",
+  "entity": "Расходы за месяц",
+  "attribute": "хранимый атрибут",
+  "value": "месяц",
+  "unit": "",
+  "condition": "",
+  "evidence": {
+    "quote": "Хранить идентификатор карты, месяц, идентификатор операции, сумму покупки в тиынах, признак отправки и порог в тенге.",
+    "locator": {
+      "section_path": "Часть A. Новый функционал › Требования к данным",
+      "line_start": 49,
+      "line_end": 49,
+      "page": null
+    }
+  }
+},
+{
+  "rid": "REQ-16",
+  "entity": "Покупка",
+  "attribute": "хранимый идентификатор",
+  "value": "идентификатор операции",
+  "unit": "",
+  "condition": "",
+  "evidence": {
+    "quote": "Хранить идентификатор карты, месяц, идентификатор операции, сумму покупки в тиынах, признак отправки и порог в тенге.",
+    "locator": {
+      "section_path": "Часть A. Новый функционал › Требования к данным",
+      "line_start": 49,
+      "line_end": 49,
+      "page": null
+    }
+  }
+},
+{
+  "rid": "REQ-16",
+  "entity": "Покупка",
+  "attribute": "единица суммы при хранении",
+  "value": "тиын",
+  "unit": "",
+  "condition": "",
+  "evidence": {
+    "quote": "Хранить идентификатор карты, месяц, идентификатор операции, сумму покупки в тиынах, признак отправки и порог в тенге.",
+    "locator": {
+      "section_path": "Часть A. Новый функционал › Требования к данным",
+      "line_start": 49,
+      "line_end": 49,
+      "page": null
+    }
+  }
+},
+{
+  "rid": "REQ-16",
+  "entity": "Push-уведомление",
+  "attribute": "хранимый признак",
+  "value": "признак отправки",
+  "unit": "",
+  "condition": "",
+  "evidence": {
+    "quote": "Хранить идентификатор карты, месяц, идентификатор операции, сумму покупки в тиынах, признак отправки и порог в тенге.",
+    "locator": {
+      "section_path": "Часть A. Новый функционал › Требования к данным",
+      "line_start": 49,
+      "line_end": 49,
+      "page": null
+    }
+  }
+},
+{
+  "rid": "REQ-16",
+  "entity": "Порог расходов",
+  "attribute": "единица при хранении",
+  "value": "тенге",
+  "unit": "",
+  "condition": "",
+  "evidence": {
+    "quote": "Хранить идентификатор карты, месяц, идентификатор операции, сумму покупки в тиынах, признак отправки и порог в тенге.",
+    "locator": {
+      "section_path": "Часть A. Новый функционал › Требования к данным",
+      "line_start": 49,
+      "line_end": 49,
+      "page": null
+    }
+  }
+},
+{
+  "rid": "REQ-17",
+  "entity": "REST API настроек",
+  "attribute": "назначение",
+  "value": "чтение и сохранение настроек приложением",
+  "unit": "",
+  "condition": "",
+  "evidence": {
+    "quote": "Приложение читает и сохраняет настройки через дочерний документ «Уведомление о расходах по карте — REST API».",
+    "locator": {
+      "section_path": "Часть A. Новый функционал › Требования к интеграции",
+      "line_start": 52,
+      "line_end": 52,
+      "page": null
+    }
+  }
+},
+{
+  "rid": "REQ-18",
+  "entity": "Расходы за месяц",
+  "attribute": "при повторной доставке события процессинга",
+  "value": "исходный итог сохраняется",
+  "unit": "",
+  "condition": "",
+  "evidence": {
+    "quote": "Повторная доставка одного события процессинга сохраняет исходный итог.",
+    "locator": {
+      "section_path": "Часть A. Новый функционал › Требования к интеграции",
+      "line_start": 52,
+      "line_end": 52,
+      "page": null
+    }
+  }
+},
+{
+  "rid": "REQ-19",
+  "entity": "Расходы за месяц",
+  "attribute": "итог после покупки",
+  "value": "50000",
+  "unit": "₸",
+  "condition": "расходы 48 500 ₸, покупка 1 500 ₸, порог 50 000 ₸",
+  "evidence": {
+    "quote": "Итог 50 000 ₸ и один push",
+    "locator": {
+      "section_path": "Часть A. Новый функционал › Критерии приемки",
+      "line_start": 63,
+      "line_end": 63,
+      "page": null
+    }
+  }
+},
+{
+  "rid": "REQ-19",
+  "entity": "Push-уведомление",
+  "attribute": "количество",
+  "value": "1",
+  "unit": "шт.",
+  "condition": "расходы 48 500 ₸, покупка 1 500 ₸, порог 50 000 ₸",
+  "evidence": {
+    "quote": "Итог 50 000 ₸ и один push",
+    "locator": {
+      "section_path": "Часть A. Новый функционал › Критерии приемки",
+      "line_start": 63,
+      "line_end": 63,
+      "page": null
+    }
+  }
+},
+{
+  "rid": "REQ-20",
+  "entity": "Расходы за месяц",
+  "attribute": "февральский счётчик",
+  "value": "4000",
+  "unit": "₸",
+  "condition": "покупка 31 января 23:58 на 4 000 ₸, затем 1 февраля 00:03 по Алматы",
+  "evidence": {
+    "quote": "Февральский счётчик вырос на 4 000 ₸",
+    "locator": {
+      "section_path": "Часть A. Новый функционал › Критерии приемки",
+      "line_start": 64,
+      "line_end": 64,
+      "page": null
+    }
+  }
+},
+{
+  "rid": "REQ-20",
+  "entity": "Покупка",
+  "attribute": "момент отнесения к месяцу",
+  "value": "1 февраля в 00:03 по Алматы",
+  "unit": "",
+  "condition": "",
+  "evidence": {
+    "quote": "Провести 1 февраля в 00:03 по Алматы",
+    "locator": {
+      "section_path": "Часть A. Новый функционал › Критерии приемки",
+      "line_start": 64,
+      "line_end": 64,
+      "page": null
+    }
+  }
+},
+{
+  "rid": "REQ-20",
+  "entity": "Покупка",
+  "attribute": "дата и сумма исходной покупки",
+  "value": "31 января в 23:58 на 4 000 ₸",
+  "unit": "₸",
+  "condition": "",
+  "evidence": {
+    "quote": "Покупка 31 января в 23:58 на 4 000 ₸",
+    "locator": {
+      "section_path": "Часть A. Новый функционал › Критерии приемки",
+      "line_start": 64,
+      "line_end": 64,
+      "page": null
+    }
+  }
+},
+{
+  "rid": "REQ-21",
+  "entity": "Расходы за месяц",
+  "attribute": "значение после перевода 500 ₸",
+  "value": "19900",
+  "unit": "₸",
+  "condition": "расходы 19 900 ₸, порог 20 000 ₸",
+  "evidence": {
+    "quote": "Счётчик показывает 19 900 ₸",
+    "locator": {
+      "section_path": "Часть A. Новый функционал › Критерии приемки",
+      "line_start": 65,
+      "line_end": 65,
+      "page": null
+    }
+  }
+},
+{
+  "rid": "REQ-22",
+  "entity": "REST API настроек",
+  "attribute": "назначение метода",
+  "value": "сохранение порога; также чтение порога",
+  "unit": "",
+  "condition": "",
+  "evidence": {
+    "quote": "Сохранение порога. Функциональные требования: чтение порога",
+    "locator": {
+      "section_path": "Часть B. REST API › Общие параметры",
+      "line_start": 103,
+      "line_end": 103,
+      "page": null
+    }
+  }
+},
+{
+  "rid": "REQ-23",
+  "entity": "REST API настроек",
+  "attribute": "HTTP-метод",
+  "value": "GET",
+  "unit": "",
+  "condition": "",
+  "evidence": {
+    "quote": "REST type | GET",
+    "locator": {
+      "section_path": "Часть B. REST API › Общие параметры",
+      "line_start": 104,
+      "line_end": 104,
+      "page": null
+    }
+  }
+},
+{
+  "rid": "REQ-24",
+  "entity": "REST API настроек",
+  "attribute": "авторизация",
+  "value": "Bearer, сессия владельца карты",
+  "unit": "",
+  "condition": "",
+  "evidence": {
+    "quote": "Bearer, сессия владельца карты",
+    "locator": {
+      "section_path": "Часть B. REST API › Общие параметры",
+      "line_start": 105,
+      "line_end": 105,
+      "page": null
+    }
+  }
+},
+{
+  "rid": "REQ-25",
+  "entity": "REST API настроек",
+  "attribute": "контроллер",
+  "value": "AlertsController",
+  "unit": "",
+  "condition": "",
+  "evidence": {
+    "quote": "Controller | AlertsController",
+    "locator": {
+      "section_path": "Часть B. REST API › Общие параметры",
+      "line_start": 106,
+      "line_end": 106,
+      "page": null
+    }
+  }
+},
+{
+  "rid": "REQ-26",
+  "entity": "REST API настроек",
+  "attribute": "окружения",
+  "value": "Dev, Prod",
+  "unit": "",
+  "condition": "",
+  "evidence": {
+    "quote": "URL type | Dev / Prod",
+    "locator": {
+      "section_path": "Часть B. REST API › Общие параметры",
+      "line_start": 107,
+      "line_end": 107,
+      "page": null
+    }
+  }
+},
+{
+  "rid": "REQ-27",
+  "entity": "REST API настроек",
+  "attribute": "URL в Dev",
+  "value": "/alerts/saveLimit",
+  "unit": "",
+  "condition": "",
+  "evidence": {
+    "quote": "Dev: /alerts/saveLimit . Prod: —",
+    "locator": {
+      "section_path": "Часть B. REST API › Общие параметры",
+      "line_start": 108,
+      "line_end": 108,
+      "page": null
+    }
+  }
+},
+{
+  "rid": "REQ-27",
+  "entity": "REST API настроек",
+  "attribute": "URL в Prod",
+  "value": "не задан",
+  "unit": "",
+  "condition": "",
+  "evidence": {
+    "quote": "Dev: /alerts/saveLimit . Prod: —",
+    "locator": {
+      "section_path": "Часть B. REST API › Общие параметры",
+      "line_start": 108,
+      "line_end": 108,
+      "page": null
+    }
+  }
+},
+{
+  "rid": "REQ-28",
+  "entity": "REST API настроек",
+  "attribute": "пример вызова",
+  "value": "GET /alerts/saveLimit с cardId, amount, enabled",
+  "unit": "",
+  "condition": "",
+  "evidence": {
+    "quote": "cardId=demo-42&amount=50000&enabled=1",
+    "locator": {
+      "section_path": "Часть B. REST API › Общие параметры",
+      "line_start": 109,
+      "line_end": 109,
+      "page": null
+    }
+  }
+},
+{
+  "rid": "REQ-29",
+  "entity": "AlertsController",
+  "attribute": "шаг 1",
+  "value": "проверить пользовательскую сессию",
+  "unit": "",
+  "condition": "",
+  "evidence": {
+    "quote": "1. Проверить пользовательскую сессию.",
+    "locator": {
+      "section_path": "Часть B. REST API › Логика работы метода",
+      "line_start": 117,
+      "line_end": 117,
+      "page": null
+    }
+  }
+},
+{
+  "rid": "REQ-30",
+  "entity": "AlertsController",
+  "attribute": "шаг 2",
+  "value": "проверить принадлежность карты клиенту",
+  "unit": "",
+  "condition": "",
+  "evidence": {
+    "quote": "2. Проверить принадлежность карты клиенту.",
+    "locator": {
+      "section_path": "Часть B. REST API › Логика работы метода",
+      "line_start": 118,
+      "line_end": 118,
+      "page": null
+    }
+  }
+},
+{
+  "rid": "REQ-31",
+  "entity": "AlertsController",
+  "attribute": "шаг 3",
+  "value": "проверить сумму и переключатель",
+  "unit": "",
+  "condition": "",
+  "evidence": {
+    "quote": "3. Проверить сумму и переключатель.",
+    "locator": {
+      "section_path": "Часть B. REST API › Логика работы метода",
+      "line_start": 119,
+      "line_end": 119,
+      "page": null
+    }
+  }
+},
+{
+  "rid": "REQ-32",
+  "entity": "AlertsController",
+  "attribute": "шаг 4",
+  "value": "заменить настройку и вернуть результат сохранения",
+  "unit": "",
+  "condition": "",
+  "evidence": {
+    "quote": "4. Заменить настройку и вернуть результат сохранения.",
+    "locator": {
+      "section_path": "Часть B. REST API › Логика работы метода",
+      "line_start": 120,
+      "line_end": 120,
+      "page": null
+    }
+  }
+},
+{
+  "rid": "REQ-33",
+  "entity": "AlertsController",
+  "attribute": "шаг 5",
+  "value": "при отклонении суммы вернуть прежнее состояние и результат ERROR",
+  "unit": "",
+  "condition": "",
+  "evidence": {
+    "quote": "5. При отклонении суммы вернуть прежнее состояние и результат ERROR.",
+    "locator": {
+      "section_path": "Часть B. REST API › Логика работы метода",
+      "line_start": 121,
+      "line_end": 121,
+      "page": null
+    }
+  }
+},
+{
+  "rid": "REQ-34",
+  "entity": "Порог расходов",
+  "attribute": "тип и границы",
+  "value": "целое число тенге, обе границы включены",
+  "unit": "",
+  "condition": "",
+  "evidence": {
+    "quote": "Целое число тенге, обе границы включены.",
+    "locator": {
+      "section_path": "Часть B. REST API › Особые правила",
+      "line_start": 124,
+      "line_end": 124,
+      "page": null
+    }
+  }
+},
+{
+  "rid": "REQ-35",
+  "entity": "Порог расходов",
+  "attribute": "повторное сохранение",
+  "value": "заменяет действующую настройку",
+  "unit": "",
+  "condition": "",
+  "evidence": {
+    "quote": "Повторное сохранение заменяет действующую настройку.",
+    "locator": {
+      "section_path": "Часть B. REST API › Особые правила",
+      "line_start": 125,
+      "line_end": 125,
+      "page": null
+    }
+  }
+},
+{
+  "rid": "REQ-36",
+  "entity": "Расходы за месяц",
+  "attribute": "при изменении порога",
+  "value": "сохраняются",
+  "unit": "",
+  "condition": "",
+  "evidence": {
+    "quote": "Изменение порога сохраняет накопленные расходы.",
+    "locator": {
+      "section_path": "Часть B. REST API › Особые правила",
+      "line_start": 126,
+      "line_end": 126,
+      "page": null
+    }
+  }
+},
+{
+  "rid": "REQ-37",
+  "entity": "AlertsController",
+  "attribute": "схема вызова",
+  "value": "приложение → AlertsController → хранилище настроек → AlertsController → приложение",
+  "unit": "",
+  "condition": "",
+  "evidence": {
+    "quote": "Приложение → AlertsController → хранилище настроек → AlertsController → приложение.",
+    "locator": {
+      "section_path": "Часть B. REST API › Схема",
+      "line_start": 130,
+      "line_end": 130,
+      "page": null
+    }
+  }
+},
+{
+  "rid": "REQ-38",
+  "entity": "REST API настроек",
+  "attribute": "path-параметры",
+  "value": "не используются",
+  "unit": "",
+  "condition": "",
+  "evidence": {
+    "quote": "Не используются.",
+    "locator": {
+      "section_path": "Часть B. REST API › Параметры запроса › Path-параметры",
+      "line_start": 136,
+      "line_end": 136,
+      "page": null
+    }
+  }
+},
+{
+  "rid": "REQ-39",
+  "entity": "Карта",
+  "attribute": "query-параметр cardId",
+  "value": "string, 1–64, обязательный, поле card_id",
+  "unit": "",
+  "condition": "",
+  "evidence": {
+    "quote": "cardId | string | 1–64 | Да",
+    "locator": {
+      "section_path": "Часть B. REST API › Параметры запроса › Query-параметры",
+      "line_start": 142,
+      "line_end": 142,
+      "page": null
+    }
+  }
+},
+{
+  "rid": "REQ-40",
+  "entity": "Порог расходов",
+  "attribute": "query-параметр amount",
+  "value": "integer 32 bit, 1 000–1 000 000, обязательный, поле limit_kzt",
+  "unit": "",
+  "condition": "",
+  "evidence": {
+    "quote": "amount | integer | 32 bit | Да | 1 000–1 000 000",
+    "locator": {
+      "section_path": "Часть B. REST API › Параметры запроса › Query-параметры",
+      "line_start": 143,
+      "line_end": 143,
+      "page": null
+    }
+  }
+},
+{
+  "rid": "REQ-41",
+  "entity": "Переключатель уведомлений",
+  "attribute": "query-параметр enabled",
+  "value": "integer 1 знак, 0 или 1, обязательный, поле enabled",
+  "unit": "",
+  "condition": "",
+  "evidence": {
+    "quote": "enabled | integer | 1 знак | Да | 0 или 1",
+    "locator": {
+      "section_path": "Часть B. REST API › Параметры запроса › Query-параметры",
+      "line_start": 144,
+      "line_end": 144,
+      "page": null
+    }
+  }
+},
+{
+  "rid": "REQ-42",
+  "entity": "REST API настроек",
+  "attribute": "Content-Type запроса",
+  "value": "application/json",
+  "unit": "",
+  "condition": "",
+  "evidence": {
+    "quote": "Content-Type: application/json",
+    "locator": {
+      "section_path": "Часть B. REST API › Параметры запроса › Request body",
+      "line_start": 147,
+      "line_end": 147,
+      "page": null
+    }
+  }
+},
+{
+  "rid": "REQ-43",
+  "entity": "REST API настроек",
+  "attribute": "тело запроса",
+  "value": "не используется",
+  "unit": "",
+  "condition": "",
+  "evidence": {
+    "quote": "Тело не используется.",
+    "locator": {
+      "section_path": "Часть B. REST API › Параметры запроса › Request body",
+      "line_start": 148,
+      "line_end": 148,
+      "page": null
+    }
+  }
+},
+{
+  "rid": "REQ-44",
+  "entity": "REST API настроек",
+  "attribute": "успешные коды",
+  "value": "200, 201",
+  "unit": "",
+  "condition": "",
+  "evidence": {
+    "quote": "Если результат 200 или 201 — успешный. Если результат 400, 401 и далее — неуспешный.",
+    "locator": {
+      "section_path": "Часть B. REST API › Ответ",
+      "line_start": 151,
+      "line_end": 151,
+      "page": null
+    }
+  }
+},
+{
+  "rid": "REQ-44",
+  "entity": "REST API настроек",
+  "attribute": "неуспешные коды",
+  "value": "400, 401 и далее",
+  "unit": "",
+  "condition": "",
+  "evidence": {
+    "quote": "Если результат 200 или 201 — успешный. Если результат 400, 401 и далее — неуспешный.",
+    "locator": {
+      "section_path": "Часть B. REST API › Ответ",
+      "line_start": 151,
+      "line_end": 151,
+      "page": null
+    }
+  }
+},
+{
+  "rid": "REQ-45",
+  "entity": "REST API настроек",
+  "attribute": "параметр ответа result",
+  "value": "string OK / ERROR",
+  "unit": "",
+  "condition": "",
+  "evidence": {
+    "quote": "result | string | OK / ERROR",
+    "locator": {
+      "section_path": "Часть B. REST API › Ответ",
+      "line_start": 155,
+      "line_end": 155,
+      "page": null
+    }
+  }
+},
+{
+  "rid": "REQ-46",
+  "entity": "Порог расходов",
+  "attribute": "параметр ответа amount",
+  "value": "string, при успехе, поле limit_kzt",
+  "unit": "",
+  "condition": "",
+  "evidence": {
+    "quote": "amount | string | При успехе | Порог в тенге",
+    "locator": {
+      "section_path": "Часть B. REST API › Ответ",
+      "line_start": 156,
+      "line_end": 156,
+      "page": null
+    }
+  }
+},
+{
+  "rid": "REQ-47",
+  "entity": "Переключатель уведомлений",
+  "attribute": "параметр ответа enabled",
+  "value": "string «0» или «1», поле enabled",
+  "unit": "",
+  "condition": "",
+  "evidence": {
+    "quote": "enabled | string | «0» или «1» | Признак включения",
+    "locator": {
+      "section_path": "Часть B. REST API › Ответ",
+      "line_start": 157,
+      "line_end": 157,
+      "page": null
+    }
+  }
+},
+{
+  "rid": "REQ-48",
+  "entity": "REST API настроек",
+  "attribute": "параметр ответа message",
+  "value": "string, при ошибке",
+  "unit": "",
+  "condition": "",
+  "evidence": {
+    "quote": "message | string | При ошибке | Описание ошибки",
+    "locator": {
+      "section_path": "Часть B. REST API › Ответ",
+      "line_start": 158,
+      "line_end": 158,
+      "page": null
+    }
+  }
+},
+{
+  "rid": "REQ-49",
+  "entity": "REST API настроек",
+  "attribute": "код 200",
+  "value": "успешное выполнение метода",
+  "unit": "",
+  "condition": "",
+  "evidence": {
+    "quote": "200. Ответ в случае успешного выполнения метода.",
+    "locator": {
+      "section_path": "Часть B. REST API › Статусы",
+      "line_start": 162,
+      "line_end": 162,
+      "page": null
+    }
+  }
+},
+{
+  "rid": "REQ-50",
+  "entity": "REST API настроек",
+  "attribute": "код 400",
+  "value": "параметры запроса заполнены неверно",
+  "unit": "",
+  "condition": "",
+  "evidence": {
+    "quote": "400. Ответ в случае, если параметры запроса заполнены неверно.",
+    "locator": {
+      "section_path": "Часть B. REST API › Статусы",
+      "line_start": 163,
+      "line_end": 163,
+      "page": null
+    }
+  }
+},
+{
+  "rid": "REQ-51",
+  "entity": "REST API настроек",
+  "attribute": "пример успешного ответа 200",
+  "value": "result OK, amount 50000, enabled 1",
+  "unit": "",
+  "condition": "",
+  "evidence": {
+    "quote": "{\"result\":\"OK\",\"amount\":\"50000\",\"enabled\":\"1\"}",
+    "locator": {
+      "section_path": "Часть B. REST API › Статусы › 200. Successful — Created",
+      "line_start": 167,
+      "line_end": 167,
+      "page": null
+    }
+  }
+},
+{
+  "rid": "REQ-52",
+  "entity": "REST API настроек",
+  "attribute": "пример ответа 200 с ошибкой",
+  "value": "result ERROR, message «Проверьте сумму»",
+  "unit": "",
+  "condition": "",
+  "evidence": {
+    "quote": "{\"result\":\"ERROR\",\"message\":\"Проверьте сумму\"}",
+    "locator": {
+      "section_path": "Часть B. REST API › Статусы › 200. Successful — Created",
+      "line_start": 171,
+      "line_end": 171,
+      "page": null
+    }
+  }
+},
+{
+  "rid": "REQ-53",
+  "entity": "REST API настроек",
+  "attribute": "код 401",
+  "value": "запрос без необходимой авторизации",
+  "unit": "",
+  "condition": "",
+  "evidence": {
+    "quote": "401. Ответ в случае, если запрос выполнен без необходимой авторизации.",
+    "locator": {
+      "section_path": "Часть B. REST API › Статусы › 200. Successful — Created",
+      "line_start": 174,
+      "line_end": 174,
+      "page": null
+    }
+  }
+},
+{
+  "rid": "REQ-54",
+  "entity": "REST API настроек",
+  "attribute": "код 403",
+  "value": "доступ к ресурсу запрещён",
+  "unit": "",
+  "condition": "",
+  "evidence": {
+    "quote": "403. Ответ в случае, если на указанный ресурс доступ запрещен.",
+    "locator": {
+      "section_path": "Часть B. REST API › Статусы › 200. Successful — Created",
+      "line_start": 175,
+      "line_end": 175,
+      "page": null
+    }
+  }
+},
+{
+  "rid": "REQ-55",
+  "entity": "REST API настроек",
+  "attribute": "код 500",
+  "value": "внутренняя ошибка сервера",
+  "unit": "",
+  "condition": "",
+  "evidence": {
+    "quote": "500. Ответ в случае, если произошла внутренняя ошибка сервера.",
+    "locator": {
+      "section_path": "Часть B. REST API › Статусы › 200. Successful — Created",
+      "line_start": 176,
+      "line_end": 176,
+      "page": null
+    }
+  }
+},
+{
+  "rid": "REQ-56",
+  "entity": "REST API настроек",
+  "attribute": "пример ответа 400",
+  "value": "message «Некорректный запрос»",
+  "unit": "",
+  "condition": "",
+  "evidence": {
+    "quote": "{\"message\":\"Некорректный запрос\"}",
+    "locator": {
+      "section_path": "Часть B. REST API › Статусы › 400. Unsuccessful — Bad request",
+      "line_start": 180,
+      "line_end": 180,
+      "page": null
+    }
+  }
+},
+{
+  "rid": "REQ-57",
+  "entity": "REST API настроек",
+  "attribute": "пример ответа 401",
+  "value": "message «Требуется вход»",
+  "unit": "",
+  "condition": "",
+  "evidence": {
+    "quote": "{\"message\":\"Требуется вход\"}",
+    "locator": {
+      "section_path": "Часть B. REST API › Статусы › 401. Unsuccessful — Unauthorized",
+      "line_start": 185,
+      "line_end": 185,
+      "page": null
+    }
+  }
+},
+{
+  "rid": "REQ-58",
+  "entity": "Карта",
+  "attribute": "код для чужой карты",
+  "value": "404, как для отсутствующей",
+  "unit": "",
+  "condition": "",
+  "evidence": {
+    "quote": "Для чужой карты возвращается 404, как и для отсутствующей карты.",
+    "locator": {
+      "section_path": "Часть B. REST API › Статусы › 403. Unsuccessful — Forbidden",
+      "line_start": 189,
+      "line_end": 189,
+      "page": null
+    }
+  }
+},
+{
+  "rid": "REQ-59",
+  "entity": "REST API настроек",
+  "attribute": "пример ответа 404",
+  "value": "message «Карта не найдена»",
+  "unit": "",
+  "condition": "",
+  "evidence": {
+    "quote": "{\"message\":\"Карта не найдена\"}",
+    "locator": {
+      "section_path": "Часть B. REST API › Статусы › 403. Unsuccessful — Forbidden",
+      "line_start": 192,
+      "line_end": 192,
+      "page": null
+    }
+  }
+},
+{
+  "rid": "REQ-60",
+  "entity": "REST API настроек",
+  "attribute": "пример ответа 500",
+  "value": "message «Ошибка сервиса»",
+  "unit": "",
+  "condition": "",
+  "evidence": {
+    "quote": "{\"message\":\"Ошибка сервиса\"}",
+    "locator": {
+      "section_path": "Часть B. REST API › Статусы › 500. Unsuccessful — Internal server error",
+      "line_start": 197,
+      "line_end": 197,
+      "page": null
+    }
+  }
+}
+]

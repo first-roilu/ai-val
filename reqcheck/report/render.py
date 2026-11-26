@@ -49,7 +49,7 @@ def _model_label(ctx: RunContext) -> str:
 def build_report(ctx: RunContext) -> Report:
     passport = RunPassport(
         document=ctx.doc.name,
-        document_path=ctx.doc.path,
+        document_path=ctx.doc.path.replace("\\", "/"),
         document_format=ctx.doc.fmt,
         sha256=ctx.doc.sha256,
         started_at=ctx.started,
@@ -65,6 +65,7 @@ def build_report(ctx: RunContext) -> Report:
         tokens_in=ctx.trace.tokens_in,
         tokens_out=ctx.trace.tokens_out,
         run_dir=str(ctx.trace.dir).replace("\\", "/"),
+        replay=ctx.settings.replay_dir.as_posix() if ctx.settings.replay_dir is not None else "",
         text_integrity=_integrity(ctx),
         limitations=list(ctx.limitations),
     )

@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import hashlib
 import traceback
 from collections.abc import Callable
 from concurrent.futures import ThreadPoolExecutor
@@ -99,12 +100,23 @@ def run(
         answers, answers_sha = load_answers(answers_file)
         ctx.answers = answers  # сохраняются в файле ответов, даже если учесть их не удастся
         notify(f"Ответы заказчика: {len(answers)} из файла {answers_file}")
-        if answers_sha and answers_sha != doc.sha256:
+        # файлы ответов версии 1.0.0 хранят сумму байтов файла — на Windows с переводами строк CRLF
+        if answers_sha and answers_sha not in (doc.sha256, hashlib.sha256(Path(input_path).read_bytes()).hexdigest()):
             ctx.limit(
                 "Ответы заказчика даны к другой версии документа (контрольная сумма не совпадает): "
                 "проверьте, что вопросы ещё актуальны."
             )
-    trace.event("start", document=doc.name, sha256=doc.sha256, provider=settings.provider, model=llm.model, lines=len(doc.lines))
+    trace.event(
+        "start",
+        document=doc.name,
+        sha256=doc.sha256,
+        provider=settings.provider,
+        model=llm.model,
+        lines=len(doc.lines),
+        quick=settings.quick,  # режим и размер пачки меняют промпты: по ним настраивается воспроизведение
+        batch_size=settings.batch_size,
+        **({"replay": settings.replay_dir.as_posix()} if settings.replay_dir is not None else {}),
+    )
     notify(f"Документ: {doc.name} ({doc.fmt.upper()}, строк: {len(doc.lines)}, разделов: {len(doc.sections) - 1})")
     if ctx.offline:
         ctx.limit(OFFLINE_NOTE + " Показаны только детерминированные проверки.")

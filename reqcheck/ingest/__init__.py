@@ -37,6 +37,14 @@ def _detect_format(path: Path, data: bytes) -> str:
     return "txt"
 
 
+def document_sha256(data: bytes, fmt: str) -> str:
+    """Контрольная сумма документа. У текстовых файлов переводы строк CRLF приводятся к LF:
+    Git на Windows (core.autocrlf) отдаёт тот же файл с CRLF, а сумма не должна зависеть от ОС."""
+    if fmt in ("md", "txt"):
+        data = data.replace(b"\r\n", b"\n")
+    return hashlib.sha256(data).hexdigest()
+
+
 def load_document(path: str | Path) -> SourceDocument:
     p = Path(path)
     if not p.is_file():
@@ -78,7 +86,7 @@ def load_document(path: str | Path) -> SourceDocument:
     doc = build_document(
         name=p.name,
         path=str(p),
-        sha256=hashlib.sha256(data).hexdigest(),
+        sha256=document_sha256(data, fmt),
         fmt=fmt,
         raw_lines=raw_lines,
         limitations=limitations,

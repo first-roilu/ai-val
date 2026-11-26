@@ -50,10 +50,13 @@ yarn-error.log*
 .DS_Store
 Thumbs.db
 
-# reqcheck: кэш ответов модели и трассы прогонов
+# reqcheck: кэш ответов модели и трассы прогонов. В репозитории — только трасса сданного отчёта
 .cache/
-runs/
+runs/*
+!runs/20261126-202502-docs-requirements/
 .pytest_cache/
+reports/replay.*
+reports/offline.*
 
 # Внутренние заметки команды (хранилище Obsidian) — не публикуются
 /knowledge/

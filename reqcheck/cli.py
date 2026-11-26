@@ -62,6 +62,12 @@ def _parser() -> argparse.ArgumentParser:
         help="требований в одном вызове проверки (по умолчанию 8; у Gemini подбирается — не больше 4 вызовов)",
     )
     p.add_argument("--thinking", choices=THINKING_LEVELS, help="уровень «размышлений» модели, если поддерживается")
+    p.add_argument(
+        "--replay",
+        metavar="ТРАССА",
+        help="пересобрать отчёт из трассы прогона (папка runs/<…>) без обращения к модели и сверить его с записанным: "
+        "проверка, что отчёт сформировал агент. Ключ не нужен",
+    )
     p.add_argument("--fail-on", choices=("critical", "major"), help="для CI: код выхода 10, если найдены дефекты этой критичности")
     p.add_argument("--version", action="version", version=f"reqcheck {__version__}")
     return p
@@ -83,7 +89,7 @@ def main(argv: list[str] | None = None) -> int:
         console.print(f"[dim]{datetime.now().strftime('%H:%M:%S')}[/dim] {message}")
 
     try:
-        settings = Settings.load(
+        overrides = dict(
             provider=args.provider,
             model=args.model,
             fallback_models=tuple(m.strip() for m in args.fallback.split(",") if m.strip()) if args.fallback is not None else None,
@@ -94,12 +100,40 @@ def main(argv: list[str] | None = None) -> int:
             batch_size=args.batch_size,
             thinking=args.thinking,
         )
+        if args.replay:
+            from reqcheck.errors import ConfigError
+            from reqcheck.llm.replay import read_start, recorded_report
+
+            replay_dir = Path(args.replay)
+            start = read_start(replay_dir)
+            # провайдер, режим и размер пачки — как в записанном прогоне: от них зависят промпты
+            overrides.update(
+                provider=start.get("provider") or None,
+                model=start.get("model") or None,
+                quick=bool(start.get("quick", False)),
+                batch_size=int(start.get("batch_size") or 0),
+                use_cache=False,
+                replay_dir=replay_dir,
+            )
+            recorded = recorded_report(replay_dir)
+            if recorded is not None and recorded.resolve() == Path(output_path).resolve():
+                raise ConfigError(
+                    f"Воспроизведение перезаписало бы проверяемый отчёт {recorded.as_posix()}. "
+                    "Укажите другой файл, например reports/replay.md."
+                )
+        settings = Settings.load(**overrides)
         settings.validate()
         reserve = settings.reserve_models
-        console.print(
-            f"[bold]reqcheck {__version__}[/bold] · провайдер {settings.provider} · модель {settings.model}"
-            + (f" · резерв: {', '.join(reserve)}" if reserve else "")
-        )
+        if settings.replay_dir is not None:
+            console.print(
+                f"[bold]reqcheck {__version__}[/bold] · воспроизведение трассы {settings.replay_dir.as_posix()} · "
+                f"модель {settings.model} не вызывается"
+            )
+        else:
+            console.print(
+                f"[bold]reqcheck {__version__}[/bold] · провайдер {settings.provider} · модель {settings.model}"
+                + (f" · резерв: {', '.join(reserve)}" if reserve else "")
+            )
         from reqcheck.orchestrator import run
 
         ask_user = None
@@ -140,6 +174,17 @@ def main(argv: list[str] | None = None) -> int:
         )
     if report.passport.limitations:
         console.print(f"[yellow]Ограничения прогона: {len(report.passport.limitations)} — см. приложение Б отчёта.[/yellow]")
+    if settings.replay_dir is not None:
+        from reqcheck.llm.replay import compare_with_recorded
+
+        problems, reference = compare_with_recorded(settings.replay_dir, report, result.markdown_path)
+        if problems:
+            console.print("[bold red]Воспроизведение разошлось с записанным прогоном:[/bold red] " + "; ".join(problems))
+            return 5
+        console.print(
+            "[bold green]Совпадает с записанным прогоном:[/bold green] число находок, критичность и вердикт"
+            + (f"; текст отчёта, кроме шапки и паспорта, — с {reference}" if reference else "")
+        )
     if result.partial:
         return 4
     if args.fail_on == "critical" and s.get("CRITICAL", 0):

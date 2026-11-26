@@ -45,6 +45,10 @@ def make_provider(settings: Settings, model: str | None = None) -> LLMClient:
 
 
 def build_client(settings: Settings, trace, notify: Notify) -> LLMClient:
+    if settings.replay_dir is not None:
+        from reqcheck.llm.replay import ReplayProvider
+
+        return Tracing(Repairing(ReplayProvider(settings.replay_dir), notify=notify), trace)
     if settings.provider == "fake":
         return Tracing(Repairing(make_provider(settings), notify=notify), trace)
     models = [settings.model, *settings.reserve_models]
