@@ -1,0 +1,368 @@
+{% set V = report.verdict %}
+{% set ST = report.stats %}
+# Отчёт о статической проверке требований
+
+> **{{ P.document }}** · {{ P.started_at | dt }} · модель `{{ P.model }}` · агент {{ P.agent_version }}
+>
+> **Разработка:** {{ V.development | go }} · **Тестирование:** {{ V.testing | go }} · дефектов {{ ST.findings_total }}: 🔴 {{ S.CRITICAL }} · 🟡 {{ S.MAJOR }} · 🟢 {{ S.MINOR }}
+{% if offline %}
+>
+> ⚠️ **Офлайн-режим.** Отчёт построен без языковой модели: показаны только детерминированные проверки (правила, структура, расчёты). Для полноценного ревью запустите агента с ключом LLM.
+{% endif %}
+
+## 1. Паспорт прогона
+
+| Параметр | Значение |
+| :--- | :--- |
+| Документ | `{{ P.document }}` ({{ P.document_format | upper }}) |
+| Путь | `{{ P.document_path | cell }}` |
+| SHA-256 документа | `{{ P.sha256 }}` |
+| Целостность текста | {{ P.text_integrity or "—" }} |
+| Дата и время прогона | {{ P.started_at | dt }} |
+| Модель | `{{ P.model }}` — {{ P.provider | provider }} |
+| Параметры модели | temperature = {{ P.temperature }}, seed = {{ P.seed if P.seed is not none else "—" }}, размышления = {{ P.thinking }} |
+| Версия агента | {{ P.agent_version }} |
+| Длительность | {{ duration }} |
+| Вызовов LLM | {{ P.llm_calls }} (из кэша: {{ P.cache_hits }}) |
+| Токены | вход {{ P.tokens_in | num }}, выход {{ P.tokens_out | num }} |
+| Критерии | ISO/IEC/IEEE 29148:2018 п. 5.2.5–5.2.7; IEEE 830-1998 п. 4.3 |
+| Трасса прогона | `{{ P.run_dir }}` |
+
+## 2. Резюме
+
+{{ report.summary }}
+
+- Выделено требований: **{{ ST.requirements_total }}**; с дефектами: **{{ ST.requirements_with_findings }}**; без замечаний: **{{ ST.requirements_clean }}**{% if ST.requirements_unreviewed %}; не проверено моделью: **{{ ST.requirements_unreviewed }}**{% endif %}.
+- Дефектов: **{{ ST.findings_total }}** — 🔴 CRITICAL {{ S.CRITICAL }} · 🟡 MAJOR {{ S.MAJOR }} · 🟢 MINOR {{ S.MINOR }}.
+- **Разработка:** {{ V.development | go }}. {{ V.rationale_dev }}
+- **Тестирование:** {{ V.testing | go }}. {{ V.rationale_test }}
+
+## 3. Нарезка требований
+
+Агент выделил **{{ report.requirements | length }}** требований. Если у пункта в документе нет номера, в столбце «ID в документе» стоит «—»: требование однозначно определяется цитатой и местом. Составной пункт разбит на части — например, «Ф-1 (1/2)».
+
+| ID в отчёте | ID в документе | Тип | Место в документе | Краткая формулировка | Цитата |
+| :--- | :--- | :--- | :--- | :--- | :--- |
+{% for r in report.requirements %}
+| <a id="{{ r.rid | anchor }}"></a>{{ r.rid }} | {{ r.doc_id_label | cell }} | {{ r.kind | kind }} | {{ r.locator | loc | cell }} | {{ r.summary | cell }} | «{{ r.quote | trunc(170) | cell }}» |
+{% endfor %}
+
+## 4. Проверка каждого требования
+
+### 4.1. Сводная матрица
+
+Критерии ISO/IEC/IEEE 29148 п. 5.2.5: НЕОБХ — необходимость, УМЕСТ — уместность, ОДНОЗН — однозначность, ПОЛН — полнота, ЕДИН — единичность, ОСУЩ — осуществимость, ПРОВ — проверяемость, КОРР — корректность, СООТВ — соответствие. ✅ нарушений нет · ⚠️ замечание · ❌ дефект · — неприменимо или не оценено.
+
+| Требование | ID в документе | {% for c in criteria %}{{ c.value }} | {% endfor %}Итог |
+| :--- | :--- | {% for c in criteria %}:-: | {% endfor %}:-: |
+{% for row in matrix %}
+| [{{ row.req.rid }}](#{{ row.req.rid | anchor }}) | {{ row.req.doc_id_label | cell }} | {% for cell in row.cells %}{{ cell }} | {% endfor %}{{ row.total }} |
+{% endfor %}
+
+### 4.2. Требования с дефектами
+
+{% for card in cards %}
+{% set r = card.req %}
+{% set a = card.assessment %}
+#### {{ r.rid }} · {{ r.doc_id_label }} · {{ r.kind | kind }}
+
+> {{ r.quote }}
+
+- **Место:** {{ r.locator | loc }}
+- **Суть:** {{ r.summary }}
+{% set flagged = a.checks | selectattr("status", "in", ["warn", "fail"]) | list %}
+{% if flagged %}
+- **Оценка по критериям:**
+{% for c in flagged %}
+  - {{ c.status | status }} {{ c.criterion | critname }}{% if c.note %} — {{ c.note | nodot }}{% endif %}
+
+{% endfor %}
+  - остальные критерии — без нарушений или неприменимы
+{% endif %}
+- **Дефекты** (подробно — в каталоге, раздел 5):
+{% for f in card.findings %}
+  - {{ f.severity | sevicon }} [{{ f.fid }}](#{{ f.fid | anchor }}) · {{ f.criterion | critname }} · {{ f.title | nodot }}{% if f.resolution == "resolved" %} · ✅ снят ответом{% elif f.resolution == "partial" %} · ◐ снят частично{% endif %}
+
+{% endfor %}
+{% if a.scenarios %}
+- **Тест-сценарии** (✅ ожидаемый результат выводится из документа, ❓ — нет):
+{% for s in a.scenarios %}
+  - {{ "✅" if s.determinable else "❓" }} {% if s.title %}{{ s.title | nodot }}: {% endif %}дано — {{ s.given | nodot }}; действие — {{ s.when | nodot }}; {% if s.determinable or (s.expected and "не определ" not in s.expected | lower) %}ожидается — {{ s.expected | nodot }}{% endif %}{% if not s.determinable and s.gap %}{% if s.expected and "не определ" not in s.expected | lower %}; {% endif %}*чего не хватает:* {{ s.gap | nodot }}{% endif %}
+
+{% endfor %}
+{% endif %}
+{% if a.rewrite %}
+- **Предлагаемая формулировка:** {{ a.rewrite }}
+{% endif %}
+{% if a.conclusion %}
+- **Заключение:** {{ a.conclusion }}
+{% endif %}
+
+{% endfor %}
+{% if not cards %}
+Дефектов в отдельных требованиях не найдено.
+{% endif %}
+
+### 4.3. Требования без замечаний
+
+{% if clean %}
+| Требование | ID в документе | Заключение |
+| :--- | :--- | :--- |
+{% for item in clean %}
+| [{{ item.req.rid }}](#{{ item.req.rid | anchor }}) | {{ item.req.doc_id_label | cell }} | {{ (item.assessment.conclusion or "Нарушений не найдено.") | trunc(300) | cell }} |
+{% endfor %}
+{% else %}
+Таких требований нет: у каждого найден хотя бы один дефект.
+{% endif %}
+
+## 5. Проверка набора требований целиком
+
+### 5.1. Свойства набора
+
+| Свойство | Стандарт | Оценка | Комментарий | Дефекты |
+| :--- | :--- | :-: | :--- | :--- |
+{% for p in report.set_properties %}
+| {{ p.criterion | critname }} ({{ p.criterion.value }}) | {{ p.criterion | std }} | {{ p.status | status }} | {{ (p.summary or "—") | cell }} | {% for fid in p.finding_ids[:12] %}[{{ fid }}](#{{ fid | anchor }}){% if not loop.last %}, {% endif %}{% endfor %}{% if p.finding_ids | length > 12 %} и ещё {{ p.finding_ids | length - 12 }}{% endif %} |
+{% endfor %}
+
+### 5.2. Противоречия
+
+{% if contradictions %}
+| Дефект | Требования | Сторона А | Сторона Б | Сценарий |
+| :--- | :--- | :--- | :--- | :--- |
+{% for f in contradictions %}
+| {{ f.severity | sevicon }} [{{ f.fid }}](#{{ f.fid | anchor }}) {{ f.title | cell }} | {{ f.rids | join(", ") }} | «{{ f.evidence[0].quote | trunc(180) | cell }}» ({{ f.evidence[0].locator | loc | cell }}) | {% if f.evidence | length > 1 %}«{{ f.evidence[1].quote | trunc(180) | cell }}» ({{ f.evidence[1].locator | loc | cell }}){% else %}—{% endif %} | {{ (f.scenario or f.problem) | trunc(300) | cell }} |
+{% endfor %}
+{% else %}
+Противоречий не найдено.
+{% endif %}
+
+### 5.3. Матрица трассировки
+
+{% if report.trace_matrix %}
+Цель и функциональные требования → критерии приёмки, API, данные, интерфейс.
+
+| Требование | Критерии приёмки | API | Данные | UI | Не покрыто |
+| :--- | :--- | :--- | :--- | :--- | :--- |
+{% for t in report.trace_matrix %}
+| [{{ t.rid }}](#{{ t.rid | anchor }}) | {{ t.acceptance | join(", ") or "—" }} | {{ t.api | join(", ") or "—" }} | {{ t.data | join(", ") or "—" }} | {{ t.ui | join(", ") or "—" }} | {{ (t.gaps or "—") | cell }} |
+{% endfor %}
+{% else %}
+Матрица трассировки не построена.
+{% endif %}
+
+{% if report.calc_checks %}
+### 5.4. Проверка расчётов
+
+Выражения выписаны моделью из документа, пересчёт выполнен кодом.
+
+| № | Показатель | Формула из документа | Заявлено | Пересчёт | Итог |
+| :--- | :--- | :--- | --: | --: | :-: |
+{% for c in report.calc_checks %}
+| {{ c.cid }} | {{ c.label | cell }} | `{{ c.expression | cell }}` | {{ c.stated | num }} | {{ c.computed | num if c.computed is not none else "—" }} | {{ {"ok": "✅", "mismatch": "❌ расхождение " ~ (c.deviation_pct | round(1)) ~ "%", "error": "⚠️ не вычислено"}[c.status] }} |
+{% endfor %}
+
+{% endif %}
+### {{ "5.5" if report.calc_checks else "5.4" }}. Каталог дефектов
+
+{% for f in report.findings %}
+#### <a id="{{ f.fid | anchor }}"></a>{{ f.fid }} · {{ f.severity | sev }} · {{ f.criterion | crit }} · {{ f.category.value }}
+
+**{{ f.title }}**
+
+{% if f.rids %}
+- **Требования:** {% for rid in f.rids %}[{{ rid }}](#{{ rid | anchor }}){% if not loop.last %}, {% endif %}{% endfor %}
+
+{% elif f.scope == "set" %}
+- **Требования:** набор в целом
+{% else %}
+- **Требования:** фрагмент вне реестра требований
+{% endif %}
+- **Где:**
+{% for e in f.evidence %}
+  - «{{ e.quote }}» — {{ e.locator | loc }}
+{% endfor %}
+- **Суть:** {{ f.problem }}
+{% if f.scenario %}
+- **Сценарий:** {{ f.scenario }}
+{% endif %}
+{% if f.impact %}
+- **Риск:** {{ f.impact }}
+{% endif %}
+{% if f.recommendation %}
+- **Как исправить:** {{ f.recommendation }}
+{% endif %}
+{% if f.questions and f.resolution != "resolved" %}
+- **Вопрос заказчику:** {{ f.questions | join(" ") }}
+{% endif %}
+{% if f.resolution %}
+- **После ответов заказчика:** {{ {"resolved": "✅ снят", "partial": "◐ снят частично", "open": "❗ остаётся открытым"}[f.resolution] }}{% if f.resolved_by %} ({{ f.resolved_by | join(", ") }}){% endif %}{% if f.resolution_note %}. {{ f.resolution_note }}{% endif %}
+
+{% endif %}
+- <sub>Источник: {{ f.source | join(", ") }}</sub>
+
+{% endfor %}
+{% if not report.findings %}
+Дефектов не найдено.
+{% endif %}
+
+## 6. Уточняющие вопросы заказчику
+
+{% if report.answers %}
+### 6.1. Учтённые ответы заказчика
+
+Ответы — решения заказчика: дефекты, которые они снимают, больше не блокируют работу, но документ по ним нужно поправить. Ниже — готовые формулировки.
+
+{% for a in report.answers %}
+#### {{ a.qid }} · {{ a.question }}
+
+- **Ответ:** {{ a.answer }}
+{% if a.resolved %}
+- **Сняты дефекты:** {% for fid in a.resolved %}[{{ fid }}](#{{ fid | anchor }}){% if not loop.last %}, {% endif %}{% endfor %}
+
+{% endif %}
+{% if a.partial %}
+- **Сняты частично:** {% for fid in a.partial %}[{{ fid }}](#{{ fid | anchor }}){% if not loop.last %}, {% endif %}{% endfor %}
+
+{% endif %}
+{% if a.still_open %}
+- **Не сняты:** {% for fid in a.still_open %}[{{ fid }}](#{{ fid | anchor }}){% if not loop.last %}, {% endif %}{% endfor %}
+
+{% endif %}
+{% if a.new_findings %}
+- **Новые дефекты из-за ответа:** {% for fid in a.new_findings %}[{{ fid }}](#{{ fid | anchor }}){% if not loop.last %}, {% endif %}{% endfor %}
+
+{% endif %}
+{% if a.amendment %}
+- **Внести в документ{% if a.where %} ({{ a.where }}){% endif %}:** «{{ a.amendment }}»
+{% endif %}
+
+{% endfor %}
+### 6.2. Открытые вопросы
+
+{% endif %}
+{% if report.questions %}
+Ответы на эти вопросы нужны, чтобы исправить дефекты. Приоритет 1 блокирует разработку. Ответить можно в файле `<отчёт>.answers.yaml` рядом с отчётом или в консоли (`--interactive`) — агент учтёт ответы и пересчитает вердикт.
+
+{% for q in report.questions %}
+#### {{ q.qid }} · приоритет {{ q.priority }} · {{ q.addressee }}
+
+**{{ q.text }}**
+
+{% if q.why %}
+- **Зачем:** {{ q.why }}
+{% endif %}
+{% if q.options %}
+- **Варианты ответа:** {% for o in q.options %}{{ loop.index }}) {{ o }}{% if not loop.last %}; {% endif %}{% endfor %}
+
+{% endif %}
+{% if q.recommended %}
+- **Рекомендуем:** {{ q.recommended }}
+{% endif %}
+{% if q.finding_ids %}
+- **Связанные дефекты:** {% for fid in q.finding_ids %}[{{ fid }}](#{{ fid | anchor }}){% if not loop.last %}, {% endif %}{% endfor %}
+
+{% endif %}
+
+{% endfor %}
+{% else %}
+Уточняющих вопросов нет.
+{% endif %}
+
+## 7. Сводка
+
+| Показатель | Значение |
+| :--- | --: |
+| Требований выделено | {{ ST.requirements_total }} |
+| Требований с дефектами | {{ ST.requirements_with_findings }} |
+| Требований без замечаний | {{ ST.requirements_clean }} |
+{% if ST.requirements_unreviewed %}
+| Не проверено моделью | {{ ST.requirements_unreviewed }} |
+{% endif %}
+| Дефектов (нарушений) всего | {{ ST.findings_total }} |
+| 🔴 CRITICAL | {{ S.CRITICAL }} |
+| 🟡 MAJOR | {{ S.MAJOR }} |
+| 🟢 MINOR | {{ S.MINOR }} |
+{% if report.answers %}
+| Снято ответами заказчика | {{ ST.resolved_by_answers }} (частично — {{ ST.partial_by_answers }}) |
+{% endif %}
+
+{% if ST.by_criterion %}
+**По критериям:** {% for code, n in ST.by_criterion.items() %}{{ code }} — {{ n }}{% if not loop.last %} · {% endif %}{% endfor %}.
+
+{% endif %}
+### Критичные дефекты
+
+{% set ns = namespace(any=false) %}
+{% for label, ids in critical.items() %}
+{% if ids %}
+{% set ns.any = true %}
+- **{{ label }}:** {% for fid in ids %}[{{ fid }}](#{{ fid | anchor }}) {{ titles[fid] }}{{ marks[fid] }}{% if not loop.last %}; {% endif %}{% endfor %}.
+{% endif %}
+{% endfor %}
+{% if not ns.any %}
+Критичных дефектов нет.
+{% endif %}
+{% set majors = major_classes.values() | sum(start=[]) %}
+{% if majors %}
+
+Существенные (MAJOR) дефекты тех же классов: {% for label, ids in major_classes.items() %}{% if ids %}{{ label }} — {% for fid in ids %}[{{ fid }}](#{{ fid | anchor }}){{ marks[fid] }}{% if not loop.last %}, {% endif %}{% endfor %}{% if not loop.last %}; {% endif %}{% endif %}{% endfor %}.
+{% endif %}
+
+## 8. Итог
+
+**Можно ли начинать разработку?** {{ V.development | go }}. {{ V.rationale_dev }}
+
+**Можно ли начинать тестирование?** {{ V.testing | go }}. {{ V.rationale_test }}
+
+{% set amended = report.answers | selectattr("amendment") | map(attribute="qid") | list %}
+{% if amended %}
+**Внести в документ решения по ответам заказчика:** {{ amended | join(", ") }} — формулировки в разделе 6.1.
+
+{% endif %}
+{% if V.fix_first %}
+**Что исправить в первую очередь:**
+
+{% for item in V.fix_first %}
+{{ loop.index }}. [{{ item.fid }}](#{{ item.fid | anchor }}) — {{ item.action }}
+{% endfor %}
+{% endif %}
+
+---
+
+## Приложение А. Методика
+
+- **Конвейер.** Документ разбит на пронумерованные строки и разделы. Детерминированные правила ищут заглушки, пустые разделы, проблемы идентификаторов и контракта API, размытые формулировки. Модель выделяет требования, проверяет каждое по 9 критериям, строя тест-сценарии, и проверяет набор с четырёх сторон: противоречия, полнота и трассировка, стандарты и риски, расчёты. Арифметику пересчитывает код. Модель-критик отсеивает ложные находки, итог и вердикт собираются по правилам.
+- **Доказательность.** Каждая находка содержит дословную цитату; место в документе (раздел и строки) найдено поиском цитаты по тексту, а не взято из ответа модели. Находки, цитаты которых не нашлись в документе, отброшены (приложение В).
+- **Критичность.** CRITICAL — разработку начинать нельзя; MAJOR — уточнить до спринта; MINOR — исправить в рабочем порядке.
+- **Ограничения метода.** Ревью выполняет языковая модель: возможны пропуски и ошибки оценки. Отчёт — инструмент для аналитика, а не замена согласования.
+
+{% if P.limitations %}
+## Приложение Б. Ограничения прогона
+
+{% for item in P.limitations %}
+- {{ item }}
+{% endfor %}
+
+{% endif %}
+{% if report.rejected %}
+## Приложение В. Отклонённые находки
+
+Находки, не попавшие в отчёт: цитата не нашлась в документе, или критик признал находку ложной либо дублем.
+
+| Источник | Находка | Причина |
+| :--- | :--- | :--- |
+{% for r in report.rejected[:60] %}
+| {{ r.source | cell }} | {{ (r.title or "") | trunc(140) | cell }} | {{ (r.reason or "") | trunc(200) | cell }} |
+{% endfor %}
+
+{% endif %}
+{% if report.glossary %}
+## Приложение Г. Термины документа
+
+| Термин | Варианты в документе | Определение в документе |
+| :--- | :--- | :-: |
+{% for t in report.glossary %}
+| {{ t.canonical | cell }} | {{ t.variants | join(", ") | cell or "—" }} | {{ "есть" if t.defined_in_doc else "нет" }} |
+{% endfor %}
+{% endif %}

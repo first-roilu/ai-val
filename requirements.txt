@@ -1,0 +1,13 @@
+# Зависимости агента reqcheck. Нужен Python 3.11+; версии проверены на Python 3.14 (Windows 10).
+google-genai==3.6.1      # Gemini API (Google AI Studio)
+openai==3.59.0           # OpenAI-совместимые API: OpenAI, OpenRouter, Groq, Ollama, vLLM…
+pydantic==2.14.4         # контракты данных и JSON-схемы ответов модели
+python-dotenv==1.2.4     # чтение .env
+PyYAML==6.0.4            # база знаний: критерии, рубрика, чек-листы
+Jinja2==3.1.6            # шаблоны промптов и отчёта
+rapidfuzz==3.14.6        # нечёткая сверка цитат, дедупликация
+rich==15.0.0             # вывод в консоль
+pymupdf4llm==2.1         # PDF → Markdown (AGPL-3.0)
+python-docx==1.2.0       # DOCX
+ftfy==6.3.1              # восстановление испорченной кодировки («кракозябры»)
+pytest==9.2.0            # тесты
