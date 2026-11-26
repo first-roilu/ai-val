@@ -1,0 +1,17 @@
+{
+  "document": "requirements.md",
+  "findings": 59,
+  "by_severity": {
+    "CRITICAL": 5,
+    "MAJOR": 33,
+    "MINOR": 21
+  },
+  "verdict": {
+    "development": "no_go",
+    "testing": "no_go"
+  },
+  "report": "reports\\clarify-example\\report.md",
+  "llm_calls": 19,
+  "cache_hits": 19,
+  "limitations": []
+}
