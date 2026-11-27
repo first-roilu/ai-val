@@ -131,6 +131,10 @@ def run(
     # 3. реестр требований — без него дальше идти некуда
     extract.run(ctx)
     notify(f"Реестр: требований {len(ctx.requirements)}")
+    # без требований смысловая проверка бессмысленна: шаги модели пропускаются, вердикт «нельзя» ставит код
+    has_requirements = bool(ctx.requirements)
+    if not has_requirements:
+        ctx.limit("В документе не найдено ни одного требования: смысловая проверка не выполнялась.")
 
     # 4–5. ревью требований и линзы, не зависящие от фактов
     quick = settings.quick
@@ -140,10 +144,11 @@ def run(
         (f"Проверка требований {i}/{len(batches)}", partial(review.run_batch, ctx, batch, str(i)))
         for i, batch in enumerate(batches, start=1)
     ]
-    if not quick:
-        tasks.append(("Факты и расчёты", partial(facts.run, ctx)))
-    tasks.append(("Линза полноты и трассировки", partial(lenses.completeness, ctx)))
-    tasks.append(("Линза стандартов и рисков", partial(lenses.standards, ctx)))
+    if has_requirements:
+        if not quick:
+            tasks.append(("Факты и расчёты", partial(facts.run, ctx)))
+        tasks.append(("Линза полноты и трассировки", partial(lenses.completeness, ctx)))
+        tasks.append(("Линза стандартов и рисков", partial(lenses.standards, ctx)))
     _run_parallel(ctx, tasks)
     for r in ctx.requirements:
         if r.rid not in ctx.assessments:
@@ -157,7 +162,7 @@ def run(
     # 5a, 5d, 5e — после фактов
     facts.run_calc(ctx, ctx.claims)
     tasks = []
-    if not quick:
+    if not quick and has_requirements:
         tasks.append(("Линза непротиворечивости", partial(lenses.consistency, ctx)))
         if lenses.needs_business(ctx):
             tasks.append(("Линза бизнес-обоснования", partial(lenses.business, ctx)))
@@ -168,19 +173,22 @@ def run(
     notify(f"Находок после слияния: {len(ctx.findings)}")
 
     # 7. критик
-    if not quick and not ctx.offline:
+    if not quick and not ctx.offline and has_requirements:
         _guarded(ctx, "Критик", lambda: critic.run(ctx))
         notify(f"Находок после критика: {len(ctx.findings)}")
 
     # 7a. ответы заказчика из файла
     if answers and ctx.offline:
         ctx.limit("Ответы заказчика не учтены: в офлайн-режиме нет модели, которая их разберёт.")
-    elif answers:
+    elif answers and has_requirements:
         _guarded(ctx, "Учёт ответов заказчика", lambda: clarify.run(ctx, answers))
         _notify_answers(ctx)
 
     # 8. итог
-    synthesis.run(ctx)
+    if has_requirements:
+        synthesis.run(ctx)
+    else:
+        synthesis.run_without_requirements(ctx)
 
     # 9. отчёт
     report = build_report(ctx)

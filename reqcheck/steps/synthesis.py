@@ -63,6 +63,12 @@ def open_findings(findings: list[Finding]) -> list[Finding]:
     return [f for f in findings if f.resolution != "resolved"]
 
 
+NO_REQUIREMENTS = (
+    "В документе не найдено ни одного требования, поэтому проверять нечего. "
+    "Нужен документ с функциональными требованиями и критериями приёмки."
+)
+
+
 def compute_verdict(ctx: RunContext) -> Verdict:
     findings = open_findings(ctx.findings)
     has_critical = any(f.severity == Severity.CRITICAL for f in findings)
@@ -187,6 +193,20 @@ def fallback_questions(findings: list[Finding], limit: int = 15) -> list[Questio
         )
         for i, (q, f) in enumerate(picked[:limit], start=1)
     ]
+
+
+def run_without_requirements(ctx: RunContext) -> None:
+    """Требований не найдено: модели нечего резюмировать, итог «нельзя» задаёт код."""
+    ctx.stats = compute_stats(ctx)
+    ctx.verdict = Verdict(
+        development="no_go",
+        testing="no_go",
+        rationale_dev=NO_REQUIREMENTS,
+        rationale_test=NO_REQUIREMENTS,
+        fix_first=default_fix_first(ctx.findings),
+    )
+    ctx.summary = NO_REQUIREMENTS
+    ctx.questions = []
 
 
 def run(ctx: RunContext) -> None:

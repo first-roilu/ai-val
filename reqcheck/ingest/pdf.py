@@ -41,11 +41,12 @@ def extract_pdf(path: Path) -> tuple[list[tuple[str, int | None]], list[str]]:
     except ImportError as exc:  # pragma: no cover
         raise InputError("Для чтения PDF нужен пакет pymupdf4llm: pip install -r requirements.txt") from exc
 
+    _check_openable(path)
     try:
         with _quiet_native_output():
             chunks = pymupdf4llm.to_markdown(str(path), page_chunks=True)
     except Exception as exc:
-        raise InputError(f"Не удалось прочитать PDF: {exc}") from exc
+        raise InputError(f"Не удалось прочитать PDF: файл повреждён или имеет нестандартную структуру ({exc}).") from exc
 
     pages: list[tuple[int, list[str]]] = []
     for i, chunk in enumerate(chunks, start=1):
@@ -74,10 +75,33 @@ def extract_pdf(path: Path) -> tuple[list[tuple[str, int | None]], list[str]]:
     chars = sum(len(text.strip()) for text, _ in out)
     if chars < 100 * max(1, len(pages)):
         raise InputError(
-            "В PDF почти нет текстового слоя (похоже на скан). Распознавание сканов не поддерживается: "
-            "пришлите PDF с текстом, DOCX или Markdown."
+            "В PDF почти нет текста: это скан или повреждённый файл. Распознавание сканов не поддерживается: "
+            "пришлите PDF с текстовым слоем, DOCX или Markdown."
         )
     return out, []
+
+
+def _check_openable(path: Path) -> None:
+    """Пароль и PDF без страниц проверяются до извлечения: pymupdf4llm на них падает с невнятной ошибкой."""
+    try:
+        import pymupdf
+    except ImportError:  # pragma: no cover
+        return
+    try:
+        with _quiet_native_output():
+            doc = pymupdf.open(str(path))
+    except Exception as exc:
+        raise InputError(f"Не удалось открыть PDF: файл повреждён ({exc}).") from exc
+    try:
+        if doc.needs_pass:
+            raise InputError(
+                "PDF защищён паролем на открытие. Снимите пароль (например, сохраните документ в PDF заново) "
+                "и запустите проверку снова."
+            )
+        if doc.page_count == 0:
+            raise InputError("В PDF нет ни одной страницы: файл повреждён.")
+    finally:
+        doc.close()
 
 
 def _skeleton(line: str) -> str:

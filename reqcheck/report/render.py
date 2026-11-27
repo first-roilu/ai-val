@@ -9,6 +9,7 @@ from pathlib import Path
 from jinja2 import Environment, FileSystemLoader, StrictUndefined
 
 from reqcheck.context import RunContext
+from reqcheck.errors import ConfigError
 from reqcheck.models import (
     CRITERION_NAME,
     CRITERION_STANDARD,
@@ -268,12 +269,31 @@ def render_markdown(report: Report) -> str:
     return re.sub(r"\n{3,}", "\n\n", text).strip() + "\n"
 
 
+# Форматы, которые агент не создаёт: текст разметки в таком файле был бы испорченным документом
+_UNSUPPORTED_REPORT_SUFFIXES = {".pdf", ".docx", ".doc", ".rtf", ".odt", ".html", ".htm", ".xlsx", ".xls", ".pptx"}
+
+
+def report_paths(output: str | Path, input_path: str | Path | None = None) -> tuple[Path, Path]:
+    """Куда лягут отчёт и JSON. Отчёт — ровно по указанному пути (.md, .txt или другой текстовый файл),
+    JSON — рядом с тем же именем; для папки — «<документ>-report.md» внутри неё."""
+    path = Path(output)
+    if path.is_dir() or str(output).endswith(("/", "\\")):
+        path = path / f"{Path(input_path).stem if input_path else 'report'}-report.md"
+    suffix = path.suffix.lower()
+    if suffix in _UNSUPPORTED_REPORT_SUFFIXES:
+        raise ConfigError(
+            f"Отчёт пишется текстом в разметке Markdown, файл {suffix} агент не создаёт. "
+            f"Укажите файл .md или .txt, например {path.with_suffix('.md').as_posix()}."
+        )
+    md_path, json_path = (path.with_suffix(".md"), path) if suffix == ".json" else (path, path.with_suffix(".json"))
+    if input_path is not None and Path(input_path).resolve() in (md_path.resolve(), json_path.resolve()):
+        raise ConfigError("Путь отчёта совпадает с проверяемым документом — отчёт перезаписал бы его. Укажите другой файл.")
+    return md_path, json_path
+
+
 def write_outputs(report: Report, output: str | Path) -> tuple[Path, Path]:
-    md_path = Path(output)
-    if md_path.suffix.lower() not in (".md", ".markdown"):
-        md_path = md_path.with_suffix(".md") if md_path.suffix.lower() != ".json" else md_path.with_suffix(".md")
+    md_path, json_path = report_paths(output)
     md_path.parent.mkdir(parents=True, exist_ok=True)
     md_path.write_text(render_markdown(report), encoding="utf-8")
-    json_path = md_path.with_suffix(".json")
     json_path.write_text(report.model_dump_json(indent=2), encoding="utf-8")
     return md_path, json_path

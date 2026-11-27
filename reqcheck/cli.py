@@ -28,7 +28,7 @@ def _parser() -> argparse.ArgumentParser:
         description="ИИ-агент статической проверки требований (ISO/IEC/IEEE 29148, IEEE 830): документ → отчёт на русском.",
     )
     p.add_argument("input", nargs="?", help="документ с требованиями: PDF, DOCX, MD или TXT")
-    p.add_argument("output", nargs="?", help="файл отчёта (.md); рядом пишется .json. По умолчанию reports/<имя>-report.md")
+    p.add_argument("output", nargs="?", help="файл отчёта: .md или .txt (текст в разметке Markdown); рядом пишется .json. По умолчанию reports/<имя>-report.md")
     p.add_argument("-i", "--input", dest="input_flag", help="то же, что первый аргумент")
     p.add_argument("-o", "--output", dest="output_flag", help="то же, что второй аргумент")
     p.add_argument(
@@ -89,6 +89,10 @@ def main(argv: list[str] | None = None) -> int:
         console.print(f"[dim]{datetime.now().strftime('%H:%M:%S')}[/dim] {message}")
 
     try:
+        from reqcheck.report.render import report_paths
+
+        # отчёт ляжет ровно по указанному пути; PDF/DOCX и путь самого документа отклоняются до вызова модели
+        output_path = str(report_paths(output_path, input_path)[0])
         overrides = dict(
             provider=args.provider,
             model=args.model,

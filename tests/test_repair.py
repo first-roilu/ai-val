@@ -53,6 +53,29 @@ def test_mixed_script_words():
     assert "mixed_script" in report.fixed
 
 
+def test_lookalike_letters_from_other_alphabets():
+    # PDF со шрифтом с неверной таблицей символов: «к» извлекается как «ĸ» (U+0138), «о» — как греческая «ο»
+    fixed, report = _fix("Для чужой ĸарты возвращается 404, ĸaĸ и пο ĸ оплате; Οплата")
+    assert fixed == "Для чужой карты возвращается 404, как и по к оплате; Оплата"
+    assert "mixed_script" in report.fixed
+
+
+def test_greek_symbols_and_latin_words_are_untouched():
+    for line in ["коэффициент α равен 0,5, плотность ρ", "сервис Kafka и OK", "Wi-Fi и API"]:
+        fixed, report = _fix(line)
+        assert fixed == line and not report.fixed, line
+
+
+def test_kazakh_letter_typed_in_latin():
+    fixed, _ = _fix("Қазақ тiлiнде")  # латинская i вместо казахской і
+    assert fixed == "Қазақ тілінде"
+
+
+def test_decomposed_letters_are_composed():
+    fixed, report = _fix("Тайм-аут и ёмкость")
+    assert fixed == "Тайм-аут и ёмкость" and "unicode" in report.fixed
+
+
 def test_invisible_and_pdf_soft_hyphen():
     fixed, report = _fix("Ф­3.​ Порог", pdf=True)
     assert fixed == "Ф-3. Порог" and report.invisible_removed == 1

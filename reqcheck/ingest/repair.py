@@ -1,4 +1,5 @@
-"""Восстановление повреждённого текста: «кракозябры», невидимые символы, смешанные алфавиты.
+"""Восстановление повреждённого текста: «кракозябры», невидимые символы, смешанные алфавиты,
+буквы-двойники из других алфавитов, разложенные буквы.
 
 Строки чинятся по одной, их число не меняется — номера строк и места цитат остаются верными.
 Что починить нельзя (�, «???», символы из частной области Unicode, «(cid:12)»), не трогаем
@@ -9,6 +10,7 @@ from __future__ import annotations
 
 import math
 import re
+import unicodedata
 from dataclasses import dataclass, field
 
 try:  # ftfy надёжно чинит UTF-8, прочитанный как cp1251/latin-1 («РўСЂРµ…», «Ð¢Ñ…»)
@@ -34,9 +36,21 @@ _INVISIBLE = dict.fromkeys(map(ord, "\u200b\u200c\u200d\u2060\ufeff"), None)
 _CONTROL_RE = re.compile(r"[\x00-\x08\x0b\x0c\x0e-\x1f\x7f-\x9f]")
 _LIGATURES = {"ﬀ": "ff", "ﬁ": "fi", "ﬂ": "fl", "ﬃ": "ffi", "ﬄ": "ffl", "ﬅ": "st", "ﬆ": "st"}
 # смешанные алфавиты: латинские двойники кириллических букв и наоборот
-_LAT2CYR = str.maketrans("AaBCcEeHKkMOoPpTXxYy", "АаВСсЕеНКкМОоРрТХхУу")
-_CYR2LAT = str.maketrans("АаВСсЕеНКкМОоРрТХхУу", "AaBCcEeHKkMOoPpTXxYy")
+_LAT_TWINS = "AaBCcEeHIiKkMOoPpTXxYy"
+_CYR_TWINS = "АаВСсЕеНІіКкМОоРрТХхУу"
+# двойники из других алфавитов: так кириллица выходит из PDF со шрифтом с неверной таблицей символов
+# («ĸарты» — U+0138 вместо «к»). В русском и казахском тексте этих букв не бывает.
+_EXOTIC_TWINS = "ĸκΚοΟρΡχΧαΑΒΕΗΜΤΥ"
+_EXOTIC_CYR = "ккКоОрРхХаАВЕНМТУ"
+# одиночная буква, которую можно заменить без контекста слова: «ĸ» и греческий омикрон символами формул не бывают
+_LONE_SAFE = set("ĸοΟ")
+_LAT2CYR = str.maketrans(_LAT_TWINS + _EXOTIC_TWINS, _CYR_TWINS + _EXOTIC_CYR)
+_CYR2LAT = str.maketrans(_CYR_TWINS, _LAT_TWINS)
+_FOREIGN_RE = re.compile(f"[A-Za-z{_EXOTIC_TWINS}]")
+_EXOTIC_RE = re.compile(f"[{_EXOTIC_TWINS}]")
+_NON_CYR_RE = re.compile(r"[A-Za-zͰ-Ͽĸ]")
 _WORD_RE = re.compile(r"[^\W\d_]{3,}")
+_ANY_WORD_RE = re.compile(r"[^\W\d_]+")
 # неисправимые повреждения
 _BROKEN_PATTERNS = [
     ("replacement", re.compile(r"�+")),
@@ -75,7 +89,8 @@ class RepairReport:
 
 FIX_LABEL = {
     "encoding": "испорченная кодировка («кракозябры»)",
-    "mixed_script": "латинские буквы внутри русских слов и наоборот",
+    "mixed_script": "буквы-двойники из латиницы и других алфавитов внутри русских слов и наоборот",
+    "unicode": "буквы, разложенные на основу и отдельный знак (й, ё)",
     "ligature": "типографские лигатуры",
     "control": "управляющие символы",
 }
@@ -124,21 +139,40 @@ def _fix_mixed_script(line: str) -> tuple[str, int]:
         nonlocal count
         word = m.group(0)
         cyr = len(_CYR_RE.findall(word))
-        lat = len(re.findall(r"[A-Za-z]", word))
-        if not cyr or not lat:
+        foreign = len(_FOREIGN_RE.findall(word))
+        if not cyr or not foreign:
             return word
-        if cyr > lat:
+        if cyr > foreign:
             fixed = word.translate(_LAT2CYR)
-        elif lat > cyr:
+        elif foreign > cyr:
             fixed = word.translate(_CYR2LAT)
         else:
             return word
-        if fixed != word and not (_CYR_RE.search(fixed) and re.search(r"[A-Za-z]", fixed)):
+        if fixed != word and not (_CYR_RE.search(fixed) and _NON_CYR_RE.search(fixed)):
             count += 1
             return fixed
         return word
 
-    return _WORD_RE.sub(fix, line), count
+    def fix_exotic(m: re.Match) -> str:
+        # слова любой длины с двойниками из других алфавитов в русской строке: «пο», «ĸ», «ĸaĸ» (ĸ + латинская a).
+        # Слово переводится в кириллицу, если в нём есть кириллица или «ĸ»/«ο» — в латинских словах их не бывает.
+        nonlocal count
+        word = m.group(0)
+        if not _EXOTIC_RE.search(word):
+            return word
+        has_lat = re.search(r"[A-Za-z]", word)
+        if not (_CYR_RE.search(word) or (_LONE_SAFE & set(word) if has_lat else set(word) <= _LONE_SAFE)):
+            return word
+        fixed = word.translate(_LAT2CYR)
+        if _NON_CYR_RE.search(fixed):
+            return word
+        count += 1
+        return fixed
+
+    line = _WORD_RE.sub(fix, line)
+    if _EXOTIC_RE.search(line) and _CYR_RE.search(line):
+        line = _ANY_WORD_RE.sub(fix_exotic, line)
+    return line, count
 
 
 def repair_line(line: str, no: int, report: RepairReport, *, pdf: bool = False) -> str:
@@ -150,6 +184,11 @@ def repair_line(line: str, no: int, report: RepairReport, *, pdf: bool = False) 
     stripped = line.translate(_INVISIBLE)
     report.invisible_removed += len(line) - len(stripped)
     line = stripped
+    # «й» и «ё» из PDF бывают разложены на букву и отдельный знак: собираем, иначе не найдутся цитаты и слова
+    if not unicodedata.is_normalized("NFC", line):
+        before = line
+        line = unicodedata.normalize("NFC", line)
+        report.add_fix("unicode", no, before, line)
 
     # сначала кодировка: в «кракозябрах» из latin-1 символы U+0080–U+009F — это байты исходного текста
     if _SUSPICIOUS_RE.search(line):
@@ -194,10 +233,32 @@ def repair_lines(lines: list[tuple[str, int | None]], *, pdf: bool = False) -> t
     return out, report
 
 
+def _utf16_without_bom(data: bytes) -> str | None:
+    """UTF-16 без BOM: нулевые байты стоят через один — у пробелов, цифр и латиницы. В UTF-8 и
+    однобайтовых кодировках нулей в тексте нет."""
+    sample = data[: 1 << 16]
+    half = len(sample) // 2
+    if half < 4:
+        return None
+    even, odd = sample[0::2].count(0), sample[1::2].count(0)
+    if odd >= 0.1 * half and even <= 0.01 * half:
+        encoding = "utf-16-le"
+    elif even >= 0.1 * half and odd <= 0.01 * half:
+        encoding = "utf-16-be"
+    else:
+        return None
+    try:
+        return data.decode(encoding)
+    except UnicodeDecodeError:
+        return None
+
+
 def decode_bytes(data: bytes) -> tuple[str, str]:
-    """Декодирует текстовый файл: BOM → UTF-8 → лучшая по «русскости» однобайтовая кодировка."""
+    """Декодирует текстовый файл: BOM → UTF-16 без BOM → UTF-8 → лучшая по «русскости» однобайтовая кодировка."""
     if data.startswith((b"\xff\xfe", b"\xfe\xff")):
         return data.decode("utf-16"), "utf-16"
+    if (text := _utf16_without_bom(data)) is not None:
+        return text, "utf-16"
     try:
         return data.decode("utf-8-sig"), "utf-8"
     except UnicodeDecodeError:
